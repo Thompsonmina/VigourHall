@@ -1,5 +1,6 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
 import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
+import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 
 const ethers = require("ethers")
 import { MetaMaskSDK } from '@metamask/sdk';
@@ -79,6 +80,18 @@ const connectMetaMaskWallet = async function () {
  });
 
 document.getElementById('connect-btn').addEventListener('click', connectMetaMaskWallet);
+document.getElementById('fitbit-btn').addEventListener('click', async () => {
+
+    let auth_url = generate_auth_url(SCOPES);
+    console.log("fitbit button clicked")
+    console.log(auth_url)
+    await notification("⌛ Loading Fitbit authentication page...");
+
+    setTimeout(function() {
+        window.location.href = auth_url;
+    }, 2000);
+}
+);
 
 async function onClickConnect() {
     console.log("onClickConnect triggered.")
