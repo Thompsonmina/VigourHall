@@ -9,8 +9,10 @@ module.exports = (env, argv) => {
 
     return {
 
+        // entry: './websrc/mad.js',
         entry: './websrc/main.js',
         output: {
+        // filename: 'mad-out.js',
         filename: 'main.js',
             path: path.resolve(__dirname, 'dist'),
             publicPath: isDevelopment ? '/' : './',

@@ -1,28 +1,29 @@
 const SCOPES = ['activity', 'heartrate', 'location', 'nutrition', 'profile', 'settings', 'sleep', 'social', 'weight'] 
 const client_id = '23R8ZL';
+const base_url = "https://vigourhall-8014c762e84c.herokuapp.com";
 
 const generate_auth_url = async (scopes) =>
 {
     // const redirect_uri = 'https://thompsonmina.github.io/VigourHall/';
 
-    const serverUrl = ' http://localhost:5000/get-challenge';
+    const serverUrl = base_url + '/get-challenge';
     const challengeResponse = await fetch(serverUrl);
     const { code_challenge, state, code_verifier } = await challengeResponse.json();
 
     // console.log(code_challenge, state);
-    console.log(code_verifier, "code verifier");
+    // console.log(code_verifier, "code verifier");
     let url = 'https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=' + client_id
     url += `&code_challenge=${code_challenge}&code_challenge_method=S256&state=${state}`
     const scopesUrl = "scope="+ scopes.map(scope => `${scope}`).join('+');
     url += `&${scopesUrl}`
 
-    return { code_verifier, url };
+    return { code_verifier, url , state};
 }
 const get_access_token = async (redirect_uri, code_verifier) => {
     const url = new URL(redirect_uri);
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state');
-    const serverUrl = 'http://localhost:5000/get-tokens';
+    const serverUrl = base_url + '/get-tokens';
 
     console.log(code_verifier)
     const tokenResponse = await fetch(serverUrl, {

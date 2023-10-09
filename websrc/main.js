@@ -82,16 +82,33 @@ const connectMetaMaskWallet = async function () {
 document.getElementById('connect-btn').addEventListener('click', connectMetaMaskWallet);
 document.getElementById('fitbit-btn').addEventListener('click', async () => {
 
-    let auth_url = generate_auth_url(SCOPES);
+    let { url, code_verifier, state } = await generate_auth_url(SCOPES);
     console.log("fitbit button clicked")
-    console.log(auth_url)
-    await notification("⌛ Loading Fitbit authentication page...");
+    console.log(url, "auth url")
+    console.log("why twice")
+    await notification("⌛ Loading Fitbit authorization page...");
 
     setTimeout(function() {
-        window.location.href = auth_url;
+        window.location.href = url;
     }, 2000);
+
+    storeFitbitCredentials(state, code_verifier, null, "")
+
 }
 );
+
+function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, method = "") {
+
+    const storeddata = { state, code_verifier, access_token, method };
+    localStorage.setItem("fitbit_info", JSON.stringify(storeddata));
+}
+
+function getFitbitCredentials() { 
+    const storeddata = localStorage.getItem("fitbit_info");
+    return JSON.parse(storeddata);
+}
+
+// https://thompsonmina.github.io/VigourHall/?code=5cfc20ffaa7215d4e179d8a7a4335ac6699627f3&state=qByQ5R8CCmnNjTVZSDOg7Q#_=_
 
 async function onClickConnect() {
     console.log("onClickConnect triggered.")
@@ -118,8 +135,31 @@ async function onClickConnect() {
     // }
 }
 
+async function getAuthAndProceed() {
+
+
+
+}
+
 window.addEventListener("load", async () => {
+    // console.log("window loaded")
     console.log("window loaded")
     await notification("⌛ Loading...");
     await connectMetaMaskWallet();
+
+    const url = new URL(window.location.href);
+
+    if ("code" in url.searchParams) {
+        const params = new URLSearchParams(url.search);
+        const code = params.get('code');
+        const state = params.get('state');
+        console.log(code, state)
+
+
+    }
+
+
+
+
+
 });
