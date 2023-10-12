@@ -11,7 +11,7 @@
 <body class="bg-[#2E2E2E] text-white">
   <!-- Navigation Bar -->
   <!-- Navigation Bar -->
-<nav class="bg-[#8B4513] p-4">
+<nav class="bg-[#8B4513] p-4" id="navbar">
     <div class="container mx-auto">
       <div class="flex items-center justify-between">
         <a href="#" class="flex items-center">
@@ -19,25 +19,22 @@
           <span class="text-2xl font-semibold">Vigour Hall</span>
         </a>
         <div class="flex items-center space-x-4">
-          <a href="#" class="group">
-            <img src="./assets/v_yes.jpeg" alt="Challenges" class="w-6 h-6">
-            <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Challenges</span>
-          </a>
-          <a href="#" class="group">
+          <a href="#" class="pri-nav-item group" data-modal-target="profileModal">
             <img src="./assets/v_yes.jpeg" alt="Profile" class="w-6 h-6">
             <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Profile</span>
           </a>
-          <a href="#" class="group">
+          <a href="#" class="pri-nav-item group" data-modal-target="earningsModal">
             <img src="./assets/v_yes.jpeg" alt="Earnings" class="w-6 h-6">
             <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Earnings</span>
           </a>
+          
           <div class="relative group">
             <img src="./assets/v_yes.jpeg" alt="Settings" class="w-6 h-6">
             <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Settings</span>
             <div class="hidden group-hover:block absolute w-48 bg-white text-[#8B4513] rounded mt-1">
-              <a href="#" class="block px-4 py-2">Login</a>
-              <a href="#" class="block px-4 py-2">Logout</a>
-              <a href="#" class="block px-4 py-2">Reassociate Address</a>
+                <a href="#" class="block px-4 py-2 sec-nav-item" data-modal-target="userModal">Sign Up / Login</a>
+                <a href="#" class="block px-4 py-2 sec-nav-item" data-modal-target="userModal">Reassociate Address</a>
+                <a href="#" class="block px-4 py-2">Logout</a>
             </div>
           </div>
         </div>
@@ -51,32 +48,11 @@
 
     <!-- Challenge Container -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-    
-    <!-- Earnings Modal -->
-<div id="earnings-modal" class="fixed inset-0 flex items-center justify-center hidden">
-    <div class="bg-[#D2B48C] rounded-lg shadow-lg w-3/4 max-w-lg">
-      <div class="flex justify-between items-center bg-[#8B4513] text-white rounded-t-lg p-4">
-        <h2 class="text-2xl font-bold">Your Earnings</h2>
-        <button onclick="toggleModal('earnings-modal')" class="text-2xl font-bold">&times;</button>
-      </div>
-      <div class="p-6">
-        <p class="text-[#8B4513] text-lg mb-4">Congratulations, here's what you've earned:</p>
-        <ul class="list-decimal list-inside text-[#8B4513]">
-          <li class="mb-2">Sleep Challenge: 50 Gold</li>
-          <li class="mb-2">Steps Challenge: 30 Gold</li>
-          <li class="mb-2">Exercise Challenge: 40 Gold</li>
-          <!-- Add more challenges here -->
-        </ul>
-        <div class="text-[#8B4513] text-xl font-bold mt-4">Total: 120 Gold</div>
-        <button class="bg-[#FFD700] text-[#8B4513] px-4 py-2 rounded mt-6">Withdraw</button>
-      </div>
-    </div>
-  </div>
-  
+
 
 
     <!-- Single Challenge Card -->
-    <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+    <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
       <!-- Logo (or Image) -->
       <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
       
@@ -106,7 +82,7 @@
     
     </div>
     </div>
-    <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+    <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
         <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
         
@@ -136,7 +112,7 @@
       
       </div>
       </div>
-      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
         <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
         
@@ -166,7 +142,7 @@
       
       </div>
       </div>
-      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
         <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
         
@@ -196,7 +172,7 @@
       
       </div>
       </div>
-      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
         <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
         
@@ -240,13 +216,13 @@
       <!-- Modal Content -->
 
 <!-- Profile Modal Container -->
-<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" style="display: none;" id="profileModal">
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden" id="profileModal">
 <!-- Profile Modal Content -->
 <div class="bg-[#D2B48C] rounded-lg w-1/2 p-8 relative">
     <h2 class="text-2xl font-semibold mb-4 border-b-2 border-[#8B4513] pb-2">Your Guild Profile</h2>
     
     <!-- Close button -->
-    <button class="absolute top-4 right-4 text-[#8B4513] text-2xl focus:outline-none" onclick="hideModal()">×</button>
+    <button class="absolute top-4 right-4 text-[#8B4513] text-2xl focus:outline-none" onclick="hideModal('profileModal')">×</button>
 
     <div class="mt-4">
     <h3 class="text-lg font-semibold text-[#8B4513] mb-2">Account Details</h3>
@@ -276,22 +252,53 @@
     </div>
   </div>
         
-<div class="bg-[#D2B48C] rounded-lg w-1/2 p-8" style="display: none;">
-    <h2 class="text-2xl font-semibold mb-4">User Management</h2>
-    <form>
-      <div class="mb-4">
-        <label for="username" class="block text-[#8B4513] mb-2">Username</label>
-        <input type="text" id="username" name="username" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+
+<!-- user management Modal -->
+<div class="absolute hidden flex justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0" id="userModal" >
+    <div class="bg-black opacity-50 h-full w-full" ></div>
+    <div class="bg-[#D2B48C] rounded-lg h-min w-1/2 p-8 absolute" >
+      <h2 class="text-2xl font-semibold mb-4">User Management</h2>
+      <form>
+        <div class="mb-4">
+          <label for="username" class="block text-[#8B4513] mb-2">Username</label>
+          <input type="text" id="username" name="username" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-[#8B4513] mb-2">Password</label>
+          <input type="password" id="password" name="password" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        </div>
+        <button type="submit" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
+          Submit
+        </button>
+      </form>
+    </div>
+</div>
+
+
+
+
+    
+<!-- Earnings Modal -->
+    <div class="fixed inset-0 flex items-center justify-center hidden" id="earningsModal">
+        <div class="bg-[#D2B48C] rounded-lg shadow-lg w-3/4 max-w-lg">
+          <div class="flex justify-between items-center bg-[#8B4513] text-white rounded-t-lg p-4">
+            <h2 class="text-2xl font-bold">Your Earnings</h2>
+            <button onclick="hideModal('earningsModal')" class="text-2xl font-bold">&times;</button>
+          </div>
+          <div class="p-6">
+            <p class="text-[#8B4513] text-lg mb-4">Congratulations, here's what you've earned:</p>
+            <ul class="list-decimal list-inside text-[#8B4513]">
+              <li class="mb-2">Sleep Challenge: 50 Gold</li>
+              <li class="mb-2">Steps Challenge: 30 Gold</li>
+              <li class="mb-2">Exercise Challenge: 40 Gold</li>
+              <!-- Add more challenges here -->
+            </ul>
+            <div class="text-[#8B4513] text-xl font-bold mt-4">Total: 120 Gold</div>
+            <button class="bg-[#FFD700] text-[#8B4513] px-4 py-2 rounded mt-6">Withdraw</button>
+          </div>
+        </div>
       </div>
-      <div class="mb-4">
-        <label for="password" class="block text-[#8B4513] mb-2">Password</label>
-        <input type="password" id="password" name="password" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
-      </div>
-      <button type="submit" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
-        Submit
-      </button>
-    </form>
-  </div>
+      
 
   <!-- <script src="./scripts.js"></script> -->
 </body>

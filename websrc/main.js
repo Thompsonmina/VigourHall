@@ -1,5 +1,5 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
-import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
+// import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 
 const ethers = require("ethers")
@@ -79,24 +79,54 @@ const connectMetaMaskWallet = async function () {
      window.location.reload();
  });
 
-document.getElementById('connect-btn').addEventListener('click', connectMetaMaskWallet);
-document.getElementById('fitbit-btn').addEventListener('click', async () => {
 
-    let { url, code_verifier, state } = await generate_auth_url(SCOPES);
-    console.log("fitbit button clicked")
-    console.log(url, "auth url")
-    console.log("why twice")
-    await notification("⌛ Loading Fitbit authorization page...");
+document.getElementById('navbar').addEventListener('click', function(event) {
+    // Check if the clicked element is a nav-item
+    console.log("navbar clicked")
+    if (event.target.matches('.pri-nav-item')) {
 
-    setTimeout(function() {
-        window.location.href = url;
-    }, 2000);
 
-    storeFitbitCredentials(state, code_verifier, null, "")
-    // read message and execute the actual function
+        // Get the target modal ID from the data-modal-target attribute
+        const modalId = event.target.getAttribute('data-modal-target');
+        console.log(modalId, "modalId")
+        if (modalId === "profileModal") {
+            // Use this modal ID to toggle the corresponding modal
+            renderProfileModal();
+        }
+        else if (modalId === "earningsModal") {
+            renderEarningsModal();
+        }
+    }
 
-}
-);
+    if (event.target.matches('.sec-nav-item')) {
+        // Get the target modal ID from the data-modal-target attribute
+        const modalId = event.target.getAttribute('data-modal-target');
+        console.log(modalId, "modalId")
+        if (modalId === "userModal") {
+            console.log("userModal?")
+            renderUserModal();
+        }
+    }
+  });
+
+// document.getElementById('connect-btn').addEventListener('click', connectMetaMaskWallet);
+// document.getElementById('fitbit-btn').addEventListener('click', async () => {
+
+//     let { url, code_verifier, state } = await generate_auth_url(SCOPES);
+//     console.log("fitbit button clicked")
+//     console.log(url, "auth url")
+//     console.log("why twice")
+//     await notification("⌛ Loading Fitbit authorization page...");
+
+//     setTimeout(function() {
+//         window.location.href = url;
+//     }, 2000);
+
+//     storeFitbitCredentials(state, code_verifier, null, "")
+//     // read message and execute the actual function
+
+// }
+// );
 
 function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, method = "") {
 
@@ -150,11 +180,24 @@ async function getAuthAndProceed() {
 
 }
 
+function renderEarningsModal() {
+    showModal('earningsModal');
+}
+
+function renderProfileModal() {
+    showModal('profileModal');
+}
+
+function renderUserModal() {
+    showModal('userModal');
+}
+
+
 window.addEventListener("load", async () => {
     // console.log("window loaded")
     console.log("window loaded")
-    await notification("⌛ Loading...");
-    await connectMetaMaskWallet();
+    // await notification("⌛ Loading...");
+    // await connectMetaMaskWallet();
 
     const url = new URL(window.location.href);
 
@@ -168,7 +211,25 @@ window.addEventListener("load", async () => {
     }
 
 
-
-
-
 });
+
+
+function hideModal(id) {
+    const body = document.querySelector("body")
+    body.classList.toggle("overflow-hidden");
+
+    const modal = document.getElementById(id);
+    if (! modal.classList.contains('hidden')) {
+        modal.classList.add('hidden');
+    }
+}
+  
+function showModal(id) {
+    const body = document.querySelector("body")
+    body.classList.toggle("overflow-hidden");
+
+    const modal = document.getElementById(id);
+    console.log(modal, "modal")
+    modal.classList.remove('hidden');
+    
+}
