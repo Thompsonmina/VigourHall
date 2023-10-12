@@ -88,7 +88,8 @@ document.getElementById('navbar').addEventListener('click', function(event) {
 
         // Get the target modal ID from the data-modal-target attribute
         const modalId = event.target.getAttribute('data-modal-target');
-        console.log(modalId, "modalId")
+        console.log(modalId, "Profile")
+
         if (modalId === "profileModal") {
             // Use this modal ID to toggle the corresponding modal
             renderProfileModal();
@@ -107,7 +108,20 @@ document.getElementById('navbar').addEventListener('click', function(event) {
             renderUserModal();
         }
     }
+});
+
+const modal_close_buttons = document.querySelectorAll('.modal-close-btn ');
+modal_close_buttons.forEach((button) => {
+  button.addEventListener('click', function() {
+      // Your click event code here
+      let id = button.parentElement.parentElement.id
+      if (!id) {
+          id = button.parentElement.parentElement.parentElement.id
+      }
+    console.log(id)
+    hideModal(id);
   });
+});
 
 // document.getElementById('connect-btn').addEventListener('click', connectMetaMaskWallet);
 // document.getElementById('fitbit-btn').addEventListener('click', async () => {
@@ -226,6 +240,7 @@ function hideModal(id) {
   
 function showModal(id) {
     const body = document.querySelector("body")
+    console.log(body)
     body.classList.toggle("overflow-hidden");
 
     const modal = document.getElementById(id);
