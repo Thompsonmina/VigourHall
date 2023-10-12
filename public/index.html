@@ -48,8 +48,235 @@
   <!-- Main Content -->
   <main class="container mx-auto p-3">
     <!-- Your main content here -->
-    <!-- Modal Content -->
-<div class="bg-[#D2B48C] rounded-lg w-1/2 p-8">
+
+    <!-- Challenge Container -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+    
+    <!-- Earnings Modal -->
+<div id="earnings-modal" class="fixed inset-0 flex items-center justify-center hidden">
+    <div class="bg-[#D2B48C] rounded-lg shadow-lg w-3/4 max-w-lg">
+      <div class="flex justify-between items-center bg-[#8B4513] text-white rounded-t-lg p-4">
+        <h2 class="text-2xl font-bold">Your Earnings</h2>
+        <button onclick="toggleModal('earnings-modal')" class="text-2xl font-bold">&times;</button>
+      </div>
+      <div class="p-6">
+        <p class="text-[#8B4513] text-lg mb-4">Congratulations, here's what you've earned:</p>
+        <ul class="list-decimal list-inside text-[#8B4513]">
+          <li class="mb-2">Sleep Challenge: 50 Gold</li>
+          <li class="mb-2">Steps Challenge: 30 Gold</li>
+          <li class="mb-2">Exercise Challenge: 40 Gold</li>
+          <!-- Add more challenges here -->
+        </ul>
+        <div class="text-[#8B4513] text-xl font-bold mt-4">Total: 120 Gold</div>
+        <button class="bg-[#FFD700] text-[#8B4513] px-4 py-2 rounded mt-6">Withdraw</button>
+      </div>
+    </div>
+  </div>
+  
+
+
+    <!-- Single Challenge Card -->
+    <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+      <!-- Logo (or Image) -->
+      <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+      
+      <!-- Summary View -->
+      <div id="challenge1-summary" class="px-6 py-4">
+        <div class="font-bold text-xl mb-2">Sleep Challenge</div>
+        <p class="text-gray-700 text-base">
+          Improve your sleep quality.
+        </p>
+      </div>
+      
+      <!-- Full View -->
+      <div id="challenge1-full" class=" px-6 py-4">
+        <h4 class="font-bold text-xl mb-2">Tiers:</h4>
+        <ul class="text-base text-gray-700">
+          <li>Tier 1: Sleep 7 hours a day.</li>
+          <li>Tier 2: Sleep 8 hours a day.</li>
+          <li>Tier 3: Sleep 9 hours a day.</li>
+        </ul>
+        <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Enroll</button>
+        <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Submit Proof</button>
+        
+        <div class="px-6 pt-4 pb-2">
+            <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
+            <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+          </div>
+    
+    </div>
+    </div>
+    <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+        <!-- Logo (or Image) -->
+        <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+        
+        <!-- Summary View -->
+        <div id="challenge1-summary" class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">Sleep Challenge</div>
+          <p class="text-gray-700 text-base">
+            Improve your sleep quality.
+          </p>
+        </div>
+        
+        <!-- Full View -->
+        <div id="challenge1-full" class=" px-6 py-4">
+          <h4 class="font-bold text-xl mb-2">Tiers:</h4>
+          <ul class="text-base text-gray-700">
+            <li>Tier 1: Sleep 7 hours a day.</li>
+            <li>Tier 2: Sleep 8 hours a day.</li>
+            <li>Tier 3: Sleep 9 hours a day.</li>
+          </ul>
+          <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Enroll</button>
+          <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Submit Proof</button>
+          
+          <div class="px-6 pt-4 pb-2">
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+            </div>
+      
+      </div>
+      </div>
+      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+        <!-- Logo (or Image) -->
+        <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+        
+        <!-- Summary View -->
+        <div id="challenge1-summary" class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">Sleep Challenge</div>
+          <p class="text-gray-700 text-base">
+            Improve your sleep quality.
+          </p>
+        </div>
+        
+        <!-- Full View -->
+        <div id="challenge1-full" class=" px-6 py-4">
+          <h4 class="font-bold text-xl mb-2">Tiers:</h4>
+          <ul class="text-base text-gray-700">
+            <li>Tier 1: Sleep 7 hours a day.</li>
+            <li>Tier 2: Sleep 8 hours a day.</li>
+            <li>Tier 3: Sleep 9 hours a day.</li>
+          </ul>
+          <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Enroll</button>
+          <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Submit Proof</button>
+          
+          <div class="px-6 pt-4 pb-2">
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+            </div>
+      
+      </div>
+      </div>
+      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+        <!-- Logo (or Image) -->
+        <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+        
+        <!-- Summary View -->
+        <div id="challenge1-summary" class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">Sleep Challenge</div>
+          <p class="text-gray-700 text-base">
+            Improve your sleep quality.
+          </p>
+        </div>
+        
+        <!-- Full View -->
+        <div id="challenge1-full" class=" px-6 py-4">
+          <h4 class="font-bold text-xl mb-2">Tiers:</h4>
+          <ul class="text-base text-gray-700">
+            <li>Tier 1: Sleep 7 hours a day.</li>
+            <li>Tier 2: Sleep 8 hours a day.</li>
+            <li>Tier 3: Sleep 9 hours a day.</li>
+          </ul>
+          <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Enroll</button>
+          <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Submit Proof</button>
+          
+          <div class="px-6 pt-4 pb-2">
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+            </div>
+      
+      </div>
+      </div>
+      <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer" onclick="toggleView('challenge1')">
+        <!-- Logo (or Image) -->
+        <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+        
+        <!-- Summary View -->
+        <div id="challenge1-summary" class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">Sleep Challenge</div>
+          <p class="text-gray-700 text-base">
+            Improve your sleep quality.
+          </p>
+        </div>
+        
+        <!-- Full View -->
+        <div id="challenge1-full" class=" px-6 py-4">
+          <h4 class="font-bold text-xl mb-2">Tiers:</h4>
+          <ul class="text-base text-gray-700">
+            <li>Tier 1: Sleep 7 hours a day.</li>
+            <li>Tier 2: Sleep 8 hours a day.</li>
+            <li>Tier 3: Sleep 9 hours a day.</li>
+          </ul>
+          <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Enroll</button>
+          <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2">Submit Proof</button>
+          
+          <div class="px-6 pt-4 pb-2">
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+            </div>
+      
+      </div>
+      </div>
+
+
+
+
+    
+    <!-- Add more challenges here -->
+    
+  </div>
+  
+  </main>
+
+      <!-- Modal Content -->
+
+<!-- Profile Modal Container -->
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" style="display: none;" id="profileModal">
+<!-- Profile Modal Content -->
+<div class="bg-[#D2B48C] rounded-lg w-1/2 p-8 relative">
+    <h2 class="text-2xl font-semibold mb-4 border-b-2 border-[#8B4513] pb-2">Your Guild Profile</h2>
+    
+    <!-- Close button -->
+    <button class="absolute top-4 right-4 text-[#8B4513] text-2xl focus:outline-none" onclick="hideModal()">×</button>
+
+    <div class="mt-4">
+    <h3 class="text-lg font-semibold text-[#8B4513] mb-2">Account Details</h3>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+        <label for="email" class="block text-[#8B4513] mb-1">Email</label>
+        <input type="email" id="email" name="email" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        </div>
+        <div>
+        <label for="phoneNumber" class="block text-[#8B4513] mb-1">Phone Number</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        </div>
+    </div>
+    </div>
+
+    <div class="mt-4">
+    <h3 class="text-lg font-semibold text-[#8B4513] mb-2">Statistics</h3>
+    <p>Coins Earned: <span class="font-bold">500</span></p>
+    <p>Current Streak: <span class="font-bold">5 days</span></p>
+    </div>
+
+    <div class="mt-4">
+    <button type="button" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
+        Update Profile
+        </button>
+      </div>
+    </div>
+  </div>
+        
+<div class="bg-[#D2B48C] rounded-lg w-1/2 p-8" style="display: none;">
     <h2 class="text-2xl font-semibold mb-4">User Management</h2>
     <form>
       <div class="mb-4">
@@ -65,11 +292,6 @@
       </button>
     </form>
   </div>
-  
-  
-  </main>
-
-
 
   <!-- <script src="./scripts.js"></script> -->
 </body>
