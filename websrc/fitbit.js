@@ -98,10 +98,10 @@ const get_sleep = async (access_token, startdate, enddate) => {
 // ).then(tokens => console.log(tokens));
 
 
-const access_token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcnNldCBybG9jIHJ3ZWkgcmhyIHJudXQgcnBybyByc2xlIiwiZXhwIjoxNjk2ODQxMDA5LCJpYXQiOjE2OTY4MTIyMDl9.wZyznwdGcaX9bv_8ohCn1kKGjI_4j96gltb2GTWEc_E";
+// const access_token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcnNldCBybG9jIHJ3ZWkgcmhyIHJudXQgcnBybyByc2xlIiwiZXhwIjoxNjk2ODQxMDA5LCJpYXQiOjE2OTY4MTIyMDl9.wZyznwdGcaX9bv_8ohCn1kKGjI_4j96gltb2GTWEc_E";
 
-get_body_fat(access_token, '2023-10-01', '2023-10-09').then(tokens => console.log(tokens));
-get_water_consumption(access_token, '2023-10-01', '2023-10-09').then(tokens => console.log(tokens));
-get_sleep(access_token, '2023-10-01', '2023-10-09').then(tokens => console.log(tokens));
-// console.log(tokens);
-// export { generate_auth_url, get_access_token, SCOPES, client_id };
+// get_body_fat(access_token, '2023-10-01', '2023-10-09').then(tokens => console.log(tokens));
+// get_water_consumption(access_token, '2023-10-01', '2023-10-09').then(tokens => console.log(tokens));
+// get_sleep(access_token, '2023-10-01', '2023-10-09').then(tokens => console.log(tokens));
+// // console.log(tokens);
+// // export { generate_auth_url, get_access_token, SCOPES, client_id };

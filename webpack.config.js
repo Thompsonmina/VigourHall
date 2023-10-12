@@ -2,17 +2,15 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') });
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = (env, argv) => {
     const isDevelopment = argv.mode === 'development'
 
 
     return {
-
-        // entry: './websrc/mad.js',
         entry: './websrc/main.js',
         output: {
-        // filename: 'mad-out.js',
         filename: 'main.js',
             path: path.resolve(__dirname, 'dist'),
             publicPath: isDevelopment ? '/' : './',
@@ -36,13 +34,20 @@ module.exports = (env, argv) => {
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'public', 'tos.html'),
                 filename: 'tos.html',
-            }),  
+            }), 
+            new MiniCssExtractPlugin({
+                filename: "styles.css",
+              }),
+            
+
         ],
         module: {
             rules: [
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
+                // use: [MiniCssExtractPlugin.loader,  'css-loader', 'postcss-loader'],
+                // use: [MiniCssExtractPlugin.loader, 'style-loader', 'css-loader', 'postcss-loader'],
+                use: ['style-loader', 'css-loader', 'postcss-loader'],
             },
             ],
         },

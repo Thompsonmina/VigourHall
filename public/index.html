@@ -1,50 +1,76 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="stylesheets/styles.css"/> -->
+  <meta charset="UTF-8">
+  <title>Vigour Hall</title>
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1" /> -->
 
-    <title>Timely Tasks</title>
+  <!-- <link href="./styles.css" rel="stylesheet"> -->
 </head>
-
-<style>
-    #alert-wrapper {
-        overflow-y: hidden;
-        max-height: 0 !important;
-        transition: max-height 0.25s ease-out !important;
-    }
-
-    #alert-wrapper.open {
-        max-height: 100px !important;
-        transition: max-height 0.25s ease-in !important;
-    }
-</style>
-
-<body>
-    <div id="alert-wrapper">
-        <div class="alert alert-info mt-2 alert-dismissible fade show" role="alert">
-            <span id="notification">⌛ Loading...</span>
+<body class="bg-[#2E2E2E] text-white">
+  <!-- Navigation Bar -->
+  <!-- Navigation Bar -->
+<nav class="bg-[#8B4513] p-4">
+    <div class="container mx-auto">
+      <div class="flex items-center justify-between">
+        <a href="#" class="flex items-center">
+          <img src="./assets/v_yes.jpeg" alt="Vigour Hall Logo" class="w-10 h-10 mr-2">
+          <span class="text-2xl font-semibold">Vigour Hall</span>
+        </a>
+        <div class="flex items-center space-x-4">
+          <a href="#" class="group">
+            <img src="./assets/v_yes.jpeg" alt="Challenges" class="w-6 h-6">
+            <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Challenges</span>
+          </a>
+          <a href="#" class="group">
+            <img src="./assets/v_yes.jpeg" alt="Profile" class="w-6 h-6">
+            <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Profile</span>
+          </a>
+          <a href="#" class="group">
+            <img src="./assets/v_yes.jpeg" alt="Earnings" class="w-6 h-6">
+            <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Earnings</span>
+          </a>
+          <div class="relative group">
+            <img src="./assets/v_yes.jpeg" alt="Settings" class="w-6 h-6">
+            <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Settings</span>
+            <div class="hidden group-hover:block absolute w-48 bg-white text-[#8B4513] rounded mt-1">
+              <a href="#" class="block px-4 py-2">Login</a>
+              <a href="#" class="block px-4 py-2">Logout</a>
+              <a href="#" class="block px-4 py-2">Reassociate Address</a>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </nav>
+  
+  <!-- Main Content -->
+  <main class="container mx-auto p-3">
+    <!-- Your main content here -->
+    <!-- Modal Content -->
+<div class="bg-[#D2B48C] rounded-lg w-1/2 p-8">
+    <h2 class="text-2xl font-semibold mb-4">User Management</h2>
+    <form>
+      <div class="mb-4">
+        <label for="username" class="block text-[#8B4513] mb-2">Username</label>
+        <input type="text" id="username" name="username" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+      </div>
+      <div class="mb-4">
+        <label for="password" class="block text-[#8B4513] mb-2">Password</label>
+        <input type="password" id="password" name="password" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+      </div>
+      <button type="submit" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
+        Submit
+      </button>
+    </form>
+  </div>
+  
+  
+  </main>
 
-    <div class="banner" id="banner">
-        <h1 class="text-4xl font-bold mb-4"> Banner </h1>
-        <p class="text-xl mb-8">Banner</p>
-        <button class="banner-btn" id="connect-btn">Connect to Metamask</button>
-    </div>
 
-    <div class="" id="">
-        <h1 class="text-4xl font-bold mb-4"> Banner </h1>
-        <p class="text-xl mb-8">Banner</p>
-        <button class="banner-btn" id="fitbit-btn">Authorise (Fitbit)</button>
-    </div>
 
-    <script src="https://unpkg.com/ethereum-blockies@0.1.1/blockies.min.js"></script>
-
+  <!-- <script src="./scripts.js"></script> -->
 </body>
-
 </html>

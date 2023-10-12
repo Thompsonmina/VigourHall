@@ -93,6 +93,7 @@ document.getElementById('fitbit-btn').addEventListener('click', async () => {
     }, 2000);
 
     storeFitbitCredentials(state, code_verifier, null, "")
+    // read message and execute the actual function
 
 }
 );
@@ -136,7 +137,15 @@ async function onClickConnect() {
 }
 
 async function getAuthAndProceed() {
-
+    const { state, code_verifier } = getFitbitCredentials();
+    console.log("getAuthAndProceed")
+    console.log(state, code_verifier)
+    const { access_token, refresh_token, scope, user_id } = await get_access_token(window.location.href, code_verifier);
+    console.log(access_token, refresh_token, scope, user_id)
+    storeFitbitCredentials(state, code_verifier, access_token, "fitbit");
+    console.log("stored credentials")
+    console.log("calling proceed")
+    await proceed();
 
 
 }
