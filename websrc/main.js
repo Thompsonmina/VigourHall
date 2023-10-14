@@ -22,6 +22,7 @@ let contract;
 
 async function isAccountConnected() {
     const accounts = await ethereum.request({ method: 'eth_accounts' });
+    console.log(accounts, "accounts")
     if (accounts.length !== 0) {
         return true;
     }
@@ -42,6 +43,7 @@ const connectMetaMaskWallet = async function () {
 
         if (isAccountConnected()) {
             await notification(" Connected to Metamask...");
+            toggleBanner()
         }
         
         else {
@@ -223,13 +225,57 @@ function renderUserModal() {
     showModal('userModal');
 }
 
+function renderNavBar(isLoggedIn) {
+    
+    
+    let authnav = document.getElementById('auth-nav')
+    
+    if (isLoggedIn) {
+
+        let main_auth = `
+        <img src="./assets/v_yes.png" alt="Settings" class="w-6 h-6">
+        <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Settings</span>
+       `
+
+        // Hide login button
+        const useractions =`
+        <div class="hidden group-hover:block absolute w-48 bg-white text-[#8B4513] rounded mt-1">
+            <a href="#" id="reassociate" class="block px-4 py-2 sec-nav-item" data-modal-target="userModal">Reassociate Address</a>
+            <a href="#" id="logout" class="block px-4 py-2">Logout</a>\
+        </div>
+        `
+        authnav.innerHTML = main_auth + useractions;
+        
+    }
+    else {
+        let main_auth = `
+        <img src="./assets/v_no.png" alt="Login" class="w-6 h-6">
+        <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Login</span>
+        `
+        authnav.innerHTML = main_auth;
+    }
+}
+
+function onLoadAuthEventHandlers(isLoggedIn) {
+    if (isLoggedIn) {
+        document.getElementById('reassociate').addEventListener('click', async () => {
+            console.log("reassociate")
+            renderUserModal();
+        });
+        document.getElementById('logout').addEventListener('click', async () => {
+            console.log("logout")
+            logout();
+        });
+    }
+    
+}
 
 window.addEventListener("load", async () => {
     // console.log("window loaded")
     console.log("window loaded")
     // await notification("⌛ Loading...");
     // await connectMetaMaskWallet();
-
+    let isconnect = await isAccountConnected()
     const url = new URL(window.location.href);
 
     if ("code" in url.searchParams) {
@@ -242,9 +288,22 @@ window.addEventListener("load", async () => {
     }
     await notification("Yeahh")
 
-    if (!isAccountConnected() ) {
+    let logged_in = await isLoggedIn(true)
+    renderNavBar(logged_in)
+    console.log(logged_in, "logged in") 
+    if (!logged_in) {
+        console.log("not logged in")
         toggleBanner()
     }
+    else {
+        toggleBanner()
+        if (isAccountConnected()) {
+            console.log("connected")
+            toggleBanner()
+        }    
+    }
+
+    
 
 });
 
