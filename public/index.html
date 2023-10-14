@@ -15,21 +15,21 @@
     <div class="container mx-auto">
       <div class="flex items-center justify-between">
         <a href="#" class="flex items-center">
-          <img src="./assets/v_yes.jpeg" alt="Vigour Hall Logo" class="w-10 h-10 mr-2">
+          <img src="./assets/v_yes.png" alt="Vigour Hall Logo" class="w-10 h-10 mr-2">
           <span class="text-2xl font-semibold">Vigour Hall</span>
         </a>
         <div class="flex items-center space-x-4">
           <a href="#" class="pri-nav-item group" data-modal-target="profileModal">
-            <img src="./assets/v_yes.jpeg" alt="Profile" class="w-6 h-6 pri-nav-item" data-modal-target="profileModal">
+            <img src="./assets/v_yes.png" alt="Profile" class="w-6 h-6 pri-nav-item" data-modal-target="profileModal">
             <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Profile</span>
           </a>
           <a href="#" class="pri-nav-item group" data-modal-target="earningsModal">
-            <img src="./assets/v_yes.jpeg" alt="Earnings" class="w-6 h-6 pri-nav-item" data-modal-target="earningsModal">
+            <img src="./assets/v_yes.png" alt="Earnings" class="w-6 h-6 pri-nav-item" data-modal-target="earningsModal">
             <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Earnings</span>
           </a>
           
           <div class="relative group">
-            <img src="./assets/v_yes.jpeg" alt="Settings" class="w-6 h-6">
+            <img src="./assets/v_yes.png" alt="Settings" class="w-6 h-6">
             <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Settings</span>
             <div class="hidden group-hover:block absolute w-48 bg-white text-[#8B4513] rounded mt-1">
                 <a href="#" class="block px-4 py-2 sec-nav-item" data-modal-target="userModal">Sign Up / Login</a>
@@ -43,7 +43,7 @@
   </nav>
   
   <!-- Main Content -->
-  <main class="container mx-auto p-3">
+  <main class="container mx-auto p-3" id="main-content">
     <!-- Your main content here -->
 
     <!-- Challenge Container -->
@@ -54,7 +54,7 @@
     <!-- Single Challenge Card -->
     <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
       <!-- Logo (or Image) -->
-      <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+      <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
       
       <!-- Summary View -->
       <div id="challenge1-summary" class="px-6 py-4">
@@ -84,7 +84,7 @@
     </div>
     <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
-        <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+        <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
         
         <!-- Summary View -->
         <div id="challenge1-summary" class="px-6 py-4">
@@ -114,7 +114,7 @@
       </div>
       <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
-        <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+        <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
         
         <!-- Summary View -->
         <div id="challenge1-summary" class="px-6 py-4">
@@ -144,7 +144,7 @@
       </div>
       <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
-        <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+        <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
         
         <!-- Summary View -->
         <div id="challenge1-summary" class="px-6 py-4">
@@ -174,7 +174,7 @@
       </div>
       <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
-        <img class="w-full h-64 object-cover" src="./assets/v_yes.jpeg" alt="Challenge 1 Logo">
+        <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
         
         <!-- Summary View -->
         <div id="challenge1-summary" class="px-6 py-4">
@@ -255,10 +255,12 @@
         
 
 <!-- user management Modal -->
-<div class="absolute hidden flex justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0" id="userModal" >
+<div class="absolute flex hidden justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0" id="userModal" >
     <div class="bg-black opacity-50 h-full w-full" ></div>
+    
 
-    <div class="bg-[#D2B48C] rounded-lg h-min w-1/2 p-8 absolute" >
+    <div class="bg-[#D2B48C] scroll-container rounded-lg h-min w-1/2 p-8 absolute" >
+      <div class="scroll-rod top-rod"></div>
       <h2 class="text-2xl font-semibold mb-4">User Management</h2>
       <button class="text-2xl font-bold modal-close-btn">&times;</button>
 
@@ -272,10 +274,17 @@
           <input type="password" id="password" name="password" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
         </div>
         <button type="submit" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
-          Submit
+          Log in
+        </button>
+        <button type="submit" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
+          Sign up
         </button>
       </form>
+      <div class="scroll-rod bottom-rod"></div>
     </div>
+    
+
+
 </div>
 
 
@@ -283,7 +292,7 @@
 
     
 <!-- Earnings Modal -->
-    <div class="absolute flex justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0" id="earningsModal">
+    <div class="absolute hidden flex justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0" id="earningsModal">
         
       <div class="bg-black opacity-50 h-full w-full" ></div>
       <div class="bg-[#D2B48C] scroll-container rounded-lg shadow-lg w-3/4 max-w-lg absolute">
@@ -307,13 +316,47 @@
       </div>
 
     
-      <div id="scroll-modal" class="hidden scroll-modal fixed inset-0 flex items-center justify-center">
+      <div id="scroll-modal" class="scroll-modal hidden fixed inset-0 flex items-center justify-center">
         <div class="scroll-container relative bg-white rounded-lg shadow-lg p-6">
+          <div class="scroll-rod top-rod"></div>
           <!-- Modal content here -->
           <h2 class="text-2xl font-bold mb-4">Scroll Title</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <div class="scroll-rod bottom-rod"></div>
         </div>
       </div>
+      
+      <div class="bg-orange-100 hidden border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
+        <p class="font-bold">Be Warned</p>
+        <p>Something not ideal might be happening.</p>
+      </div>
+
+      
+      <div class="alert-container fixed hidden top-0 left-0 right-0 flex justify-center">
+        <div class="alert-body relative rounded-lg shadow-lg p-6">
+          <!-- Alert Content -->
+          <p id="notification">This is an important message.</p>
+          <div class="alert-icon">
+            <img src="./assets/seal.png" alt="Vigour Hall Logo" class="w-10 h-10 mr-2">          </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="intro-banner" class="fixed hidden inset-0 flex flex-col items-center justify-center bg-opacity-90 z-10">
+        <img src="./assets/v_yes.png" alt="Vigour Hall Logo" class="w-32 h-32 mb-4">
+        <h1 class="text-4xl font-bold text-gold mb-4">Welcome to Vigour Hall!</h1>
+        <p class="text-xl text-white mb-4">
+          A social crypto web application that rewards your fitness efforts.
+        </p>
+        <button id="connect-metamask" class="px-6 py-3 bg-green-600 text-white rounded-lg">
+          Connect with MetaMask
+        </button>
+      </div>
+      
+      
+      
+
+      
       
       
 

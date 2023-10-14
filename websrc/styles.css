@@ -3,28 +3,62 @@
 @import "tailwindcss/utilities";
 
 /* src/assets/css/global.css */
-.scroll-container::before,
-.scroll-container::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: linear-gradient(to bottom, #8B4513, #F5F5DC);
-  border-radius: 50%;
-  z-index: -1;
-}
 
-.scroll-container::before {
-  top: -10px;
-}
-
-.scroll-container::after {
-  bottom: -10px;
-}
-
-/* Updating the background and text color */
 .scroll-container {
-  background-color: #F5F5DC;
-  color: #3D2B1F;
-}
+    background-color: #FAF3E0; 
+     /* Beige */
+    border: 2px solid #3E2723;  
+    /* Dark Brown */
+    transform: perspective(800px) rotateX(5deg);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .scroll-container:hover {
+    transform: perspective(800px) rotateX(0deg);
+  }
+  
+  .scroll-rod {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 30px;  /* Increased from 20px to 40px */
+    background: linear-gradient(to bottom, #8B4513, #D2B48C);  /* Saddle Brown to Tan */
+    border-radius: 50%;
+    z-index: -1;
+  }
+  
+  .top-rod {
+    top: -15px;  /* Increased from -10px to -20px */
+  }
+  
+  .bottom-rod {
+    bottom: -15px;  /* Increased from -10px to -20px */
+  }
+  
+  .alert-container {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  
+  .alert-body {
+    background-color: #FAF3E0; 
+    border: 2px solid #3E2723; 
+    position: relative;
+    text-align: center;
+    color: #3E2723;
+  }
+  
+  .alert-icon {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%);
+  }
+  
+  
+  
+  
+  

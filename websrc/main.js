@@ -1,5 +1,5 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
-// import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
+import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 
 const ethers = require("ethers")
@@ -20,40 +20,57 @@ let provider;
 let current_address;
 let contract;
 
-function closeBanner() {
-    document.getElementById('banner').style.display = 'none';
-    document.getElementById('all_content').classList.remove('hidden');
-  }
+async function isAccountConnected() {
+    const accounts = await ethereum.request({ method: 'eth_accounts' });
+    if (accounts.length !== 0) {
+        return true;
+    }
+    return false;
+}
 
+async function isLoggedIn(bool = false) {
+    return bool;
+}
+
+function toggleBanner() {
+    document.getElementById('intro-banner').classList.toggle("hidden");
+    document.getElementById('main-content').classList.toggle('hidden');
+}
 
 const connectMetaMaskWallet = async function () {
     if (ethereum.isMetaMask) {
+
+        if (isAccountConnected()) {
+            await notification(" Connected to Metamask...");
+        }
         
-        await notification("⚠️ Please approve this DApp to use it.")
-        try {
-            let accounts = await ethereum.request({ method: 'eth_requestAccounts', params: [] });
-            current_address = accounts[0];
-            console.log(current_address);
-        }
-        catch (error) {
-            console.error(error);
-        }
-        console.log("approved")
-        try {
-            
+        else {
+            await notification("⚠️ Please approve this DApp to use it.")
+            try {
+                let accounts = await ethereum.request({ method: 'eth_requestAccounts', params: [] });
+                current_address = accounts[0];
+                console.log(current_address);
+            }
+            catch (error) {
+                console.error(error);
+            }
+            console.log("approved")
+            try {
+                
                 provider = new ethers.BrowserProvider(
-                ethereum,
-                "any"
-            );
-            console.log("here?");
+                    ethereum,
+                    "any"
+                );
+                console.log("here?");
+                
+                signer = await provider.getSigner();
+                console.log("passed finder")
             
-            signer = await provider.getSigner();
-            console.log("passed finder")
-           
-        }
-        catch (error) {
-            await notification(`⚠️ ${error}.`)
-            console.error(error);
+            }
+            catch (error) {
+                await notification(`⚠️ ${error}.`)
+                console.error(error);
+            }
         }
     }
     else {
@@ -123,7 +140,7 @@ modal_close_buttons.forEach((button) => {
   });
 });
 
-// document.getElementById('connect-btn').addEventListener('click', connectMetaMaskWallet);
+document.getElementById('connect-metamask').addEventListener('click', connectMetaMaskWallet);
 // document.getElementById('fitbit-btn').addEventListener('click', async () => {
 
 //     let { url, code_verifier, state } = await generate_auth_url(SCOPES);
@@ -223,7 +240,11 @@ window.addEventListener("load", async () => {
 
 
     }
+    await notification("Yeahh")
 
+    if (!isAccountConnected() ) {
+        toggleBanner()
+    }
 
 });
 
