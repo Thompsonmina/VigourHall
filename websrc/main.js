@@ -1,5 +1,7 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
 import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
+import { logout, isLoggedIn } from "./user";
+import { auth_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 
 const ethers = require("ethers")
@@ -29,9 +31,6 @@ async function isAccountConnected() {
     return false;
 }
 
-async function isLoggedIn(bool = false) {
-    return bool;
-}
 
 function toggleBanner() {
     document.getElementById('intro-banner').classList.toggle("hidden");
@@ -221,7 +220,13 @@ function renderProfileModal() {
     showModal('profileModal');
 }
 
-function renderUserModal() {
+function renderUserModal(option) {
+    if (option === "auth") {
+        modal_body = auth_modal("login")
+        let modal = document.getElementById('userModalBody');
+        modal.innerHTML = modal_body;
+    
+    }
     showModal('userModal');
 }
 
@@ -249,10 +254,17 @@ function renderNavBar(isLoggedIn) {
     }
     else {
         let main_auth = `
-        <img src="./assets/v_no.png" alt="Login" class="w-6 h-6">
+        <img src="./assets/v_yes.png" alt="Login" class="w-6 h-6">
         <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Login</span>
         `
         authnav.innerHTML = main_auth;
+
+        const other_navitems = document.querySelectorAll('.pri-nav-item ');
+        other_navitems.forEach((navitem) => {
+            navitem.classList.toggle("hidden")
+        });
+
+        
     }
 }
 
@@ -260,12 +272,19 @@ function onLoadAuthEventHandlers(isLoggedIn) {
     if (isLoggedIn) {
         document.getElementById('reassociate').addEventListener('click', async () => {
             console.log("reassociate")
-            renderUserModal();
+            renderUserModal("reassociate");
         });
         document.getElementById('logout').addEventListener('click', async () => {
             console.log("logout")
             logout();
         });
+    }
+    else {
+        document.getElementById('auth-nav').addEventListener('click', async () => {
+            console.log("login")
+            renderUserModal("auth")
+        });
+       
     }
     
 }
@@ -288,7 +307,7 @@ window.addEventListener("load", async () => {
     }
     await notification("Yeahh")
 
-    let logged_in = await isLoggedIn(true)
+    let logged_in = await isLoggedIn(false)
     renderNavBar(logged_in)
     console.log(logged_in, "logged in") 
     if (!logged_in) {
