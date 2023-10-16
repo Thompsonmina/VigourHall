@@ -16,7 +16,7 @@ const auth_modal = (option) => {
         <input type="text" id="username-input" name="username" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
         </div>
         
-        <button id="login-submit-btn" type="submit" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
+        <button id="login-submit-btn"  class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
             Log in
         </button>
         
@@ -35,16 +35,33 @@ const auth_modal = (option) => {
         <form>
         <div class="mb-4">
         <label for="username" class="block text-[#8B4513] mb-2">Username</label>
-        <input type="text" id="username" name="username" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        <input type="text" id="username-input" name="username-input" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
         </div>
-        <button id="sign-up-btn" type="submit" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
-        Sign up
+        <button id="generateBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Generate Phrase
+    </button>
+
+    <!-- Display Phrase & Copy/Download Button -->
+    <div id="phraseContainer" class="hidden mt-5">
+        <p id="phrase" class="mb-4"></p>
+        <button id="copyBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Copy/Download Phrase
         </button>
+    </div>
+
+    <!-- Textarea & Submit Phrase Button -->
+        <div id="submitContainer" class="hidden mt-5">
+            <label for="phrase" class="block text-[#8B4513] mb-2">PassPhrase</label>
+            <textarea id="phraseInput" class="w-full p-3 border rounded"></textarea>
+            <button id="sign-up-btn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">
+                Create Account
+            </button>
+        </div>
         
         </form>
         <div>
             Already have an account?
-            <a id="switch-to-login-btn" type="submit" class="text-white px-4 py-2 rounded hover:bg-[#FFD700]" style="text-decoration: underline;">
+            <a id="switch-to-login-btn"  class="text-white px-4 py-2 rounded hover:bg-[#FFD700]" style="text-decoration: underline;">
                 Log in
             </a>
         </div>
@@ -82,20 +99,13 @@ const other_user_actions_modal = (option) => {
         </div>
         <div class="mb-4">
         <label for="recovery phrase" class="block text-[#8B4513] mb-2">12 word recovery phrase</label>
-        <input type="textarea" id="mnemonic" name="mnemonic" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        <textarea type="textarea" id="mnemonic" name="mnemonic" class="w-full max-w-lg p-2 rounded border border-[#8B4513]"></textarea>
         </div>
-        <button id="sign-up-btn" type="submit" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
-        Sign up
+        <button id="reassociate-btn" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
+        Reassociate Address
         </button>
         
-        </form>
-        <div>
-            Already have an account?
-            <a id="switch-to-login-btn" type="submit" class="text-white px-4 py-2 rounded hover:bg-[#FFD700]" style="text-decoration: underline;">
-                Log in
-            </a>
-        </div>
-        `
+        </form>        `
 
         header = "Reassociate with a different address"
     } 

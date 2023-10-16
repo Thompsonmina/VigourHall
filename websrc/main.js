@@ -1,17 +1,22 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
 import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
-import { logout, isLoggedIn, generate_mnemonic} from "./user";
-import { auth_modal } from "./components";
+import { logout, isLoggedIn, generate_mnemonic } from "./user";
+import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 
 console.log(generate_mnemonic())
 const login = async (username) => {
-    console.log("login")
+    console.log(username, "login")
 }
 
 const signup = async (username) => {
-    console.log("signup")
+    console.log(username, "signup")
+
 }
+
+const reassociate_user = async (username, new_address) => {
+    console.log(username, new_address, "reassociate_user")
+}   
 
 
 const ethers = require("ethers")
@@ -134,26 +139,32 @@ document.getElementById('navbar').addEventListener('click', function(event) {
         // Get the target modal ID from the data-modal-target attribute
         // search for the reassocciate button attribute
         const modalId = event.target.getAttribute('data-modal-target');
+        const userAction = event.target.getAttribute('data-user-action');
+        
         console.log(modalId, "modalId")
-        if (modalId === "userModal") {
-            console.log("userModal?")
-            renderUserModal();
+        if (userAction === "reassociate") {
+            console.log("reassociate")
+            renderUserModal("reassociate");
         }
     }
 });
 
-const modal_close_buttons = document.querySelectorAll('.modal-close-btn ');
-modal_close_buttons.forEach((button) => {
-  button.addEventListener('click', function() {
-      // Your click event code here
-      let id = button.parentElement.parentElement.id
-      if (!id) {
-          id = button.parentElement.parentElement.parentElement.id
-      }
-    console.log(id)
-    hideModal(id);
-  });
-});
+function listen_for_close_modal() {
+    const modal_close_buttons = document.querySelectorAll('.modal-close-btn ');
+
+    modal_close_buttons.forEach((button) => {
+        button.addEventListener('click', function() {
+            // Your click event code here
+            let id = button.parentElement.parentElement.id
+            if (!id) {
+                id = button.parentElement.parentElement.parentElement.id
+            }
+          console.log(id)
+          hideModal(id);
+        });
+      });
+}
+
 
 document.getElementById('connect-metamask').addEventListener('click', connectMetaMaskWallet);
 // document.getElementById('fitbit-btn').addEventListener('click', async () => {
@@ -228,11 +239,15 @@ async function getAuthAndProceed() {
 
 function renderEarningsModal() {
     showModal('earningsModal');
+    listen_for_close_modal()
 }
 
 function renderProfileModal() {
     showModal('profileModal');
+    listen_for_close_modal()
 }
+
+
 
 function renderUserModal(option) {
     if (option === "login") {
@@ -244,17 +259,43 @@ function renderUserModal(option) {
             renderUserModal("signup");
         })
 
-        document.getElementById('login-submit-btn').addEventListener('click', async () => {
-            
+        document.getElementById('login-submit-btn').addEventListener('click', async (event) => {
+            event.preventDefault();
             let username = document.getElementById('username-input').value;
             await login(username)
+            hideModal('userModal')
         })
 
-
-    
     }
 
     if (option === "signup") {
+        const phrase = generate_mnemonic();
+
+        const generatePhrase = () => {
+            // Generate a mock phrase. You can replace this with actual logic.
+        
+            // Hide the generate button
+            document.getElementById('generateBtn').classList.add('hidden');
+        
+            // Display the phrase and copy/download button
+            document.getElementById('phrase').textContent = phrase;
+            document.getElementById('phraseContainer').classList.remove('hidden');
+
+            notification("Please copy your phrase and store it somewhere safe. You will need it to recover/reassociate your account.")
+        }
+
+        const copyPhrase = () =>  {
+            // Get the generated phrase text
+            const phraseText = document.getElementById('phrase').textContent;
+        
+            document.getElementById('submitContainer').classList.remove('hidden');
+        
+            // Hide the phrase and copy/download button
+            document.getElementById('phraseContainer').classList.add('hidden');          
+            navigator.clipboard.writeText(phrase);
+        }
+
+        
         let modal_body = auth_modal("signup")
         let modal = document.getElementById('userModalHolder');
         modal.innerHTML = modal_body;
@@ -263,13 +304,43 @@ function renderUserModal(option) {
             renderUserModal("login");
         })
 
-        document.getElementById('sign-up-btn').addEventListener('click', async () => {
+        document.getElementById('generateBtn').addEventListener('click', generatePhrase);
+        document.getElementById('copyBtn').addEventListener('click', copyPhrase);
+
+        document.getElementById('sign-up-btn').addEventListener('click', async (event) => {
+            event.preventDefault();
             let username = document.getElementById('username-input').value;
-            await signup(username)
-        })
+            let phrasetext = document.getElementById('phraseInput').value;
             
+            if (phrase != phrasetext) {
+                console.log("phrase is not correct")
+            }
+            else {
+                await signup(username)
+                hideModal('userModal')
+            }
+        })
+                    
+    }
+
+    if (option === "reassociate") {
+        let modal_body = other_user_actions_modal("reassociate")
+        let modal = document.getElementById('userModalHolder');
+        console.log(modal_body, "reassociate")
+        modal.innerHTML = modal_body;
+
+        document.getElementById('reassociate-btn').addEventListener('click', async (event) => {
+            event.preventDefault();
+            let address = document.getElementById('new-address').value;
+            let mnemonic = document.getElementById('mnemonic').value;
+
+            reassociate_user(address, mnemonic)
+            hideModal('userModal')
+        })
+
     }
     showModal('userModal');
+    listen_for_close_modal()
 }
 
 function renderNavBar(isLoggedIn) {
@@ -309,37 +380,31 @@ function renderNavBar(isLoggedIn) {
         </a>
         `
         authnav.innerHTML = main_auth;
-
-        
-
         
     }
 }
 
-function onLoadAuthEventHandlers(isLoggedIn) {
-    if (isLoggedIn) {
-        document.getElementById('reassociate').addEventListener('click', async () => {
-            console.log("reassociate")
-            renderUserModal("reassociate");
-        });
-        document.getElementById('logout').addEventListener('click', async () => {
-            console.log("logout")
-            logout();
-        });
-    }
-    else {
-        document.getElementById('auth-nav').addEventListener('click', async () => {
-            console.log("login")
-            renderUserModal("auth")
-        });
+// function onLoadAuthEventHandlers(isLoggedIn) {
+//     if (isLoggedIn) {
+//         document.getElementById('reassociate').addEventListener('click', async () => {
+//             console.log("reassociate")
+//             renderUserModal("reassociate");
+//         });
+//         document.getElementById('logout').addEventListener('click', async () => {
+//             console.log("logout")
+//             logout();
+//         });
+//     }
+//     else {
+//         document.getElementById('auth-nav').addEventListener('click', async () => {
+//             console.log("login")
+//             renderUserModal("auth")
+//         });
        
-    }
+//     }
     
-}
+// }
 
-function onSigninModalEventHandlers() {
-    document.getElementById()
-}
 
 window.addEventListener("load", async () => {
     // console.log("window loaded")
@@ -359,7 +424,7 @@ window.addEventListener("load", async () => {
     }
     await notification("Yeahh")
 
-    let logged_in = await isLoggedIn(false)
+    let logged_in = await isLoggedIn(true)
     renderNavBar(logged_in)
     console.log(logged_in, "logged in") 
     if (!logged_in) {
