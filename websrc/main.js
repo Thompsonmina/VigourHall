@@ -1,8 +1,18 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
 import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
-import { logout, isLoggedIn } from "./user";
+import { logout, isLoggedIn, generate_mnemonic} from "./user";
 import { auth_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
+
+console.log(generate_mnemonic())
+const login = async (username) => {
+    console.log("login")
+}
+
+const signup = async (username) => {
+    console.log("signup")
+}
+
 
 const ethers = require("ethers")
 import { MetaMaskSDK } from '@metamask/sdk';
@@ -100,9 +110,9 @@ const connectMetaMaskWallet = async function () {
 
 document.getElementById('navbar').addEventListener('click', function(event) {
     // Check if the clicked element is a nav-item
-    console.log("navbar clicked")
     if (event.target.matches('.pri-nav-item')) {
 
+        console.log("navbar clicked in pri")
 
         // Get the target modal ID from the data-modal-target attribute
         const modalId = event.target.getAttribute('data-modal-target');
@@ -115,10 +125,14 @@ document.getElementById('navbar').addEventListener('click', function(event) {
         else if (modalId === "earningsModal") {
             renderEarningsModal();
         }
+        else if (modalId === "userModal") {
+            renderUserModal("login");
+        }
     }
 
     if (event.target.matches('.sec-nav-item')) {
         // Get the target modal ID from the data-modal-target attribute
+        // search for the reassocciate button attribute
         const modalId = event.target.getAttribute('data-modal-target');
         console.log(modalId, "modalId")
         if (modalId === "userModal") {
@@ -221,11 +235,39 @@ function renderProfileModal() {
 }
 
 function renderUserModal(option) {
-    if (option === "auth") {
-        modal_body = auth_modal("login")
-        let modal = document.getElementById('userModalBody');
+    if (option === "login") {
+        let modal_body = auth_modal("login")
+        let modal = document.getElementById('userModalHolder');
         modal.innerHTML = modal_body;
+
+        document.getElementById('switch-to-signup-btn').addEventListener('click', async () => { 
+            renderUserModal("signup");
+        })
+
+        document.getElementById('login-submit-btn').addEventListener('click', async () => {
+            
+            let username = document.getElementById('username-input').value;
+            await login(username)
+        })
+
+
     
+    }
+
+    if (option === "signup") {
+        let modal_body = auth_modal("signup")
+        let modal = document.getElementById('userModalHolder');
+        modal.innerHTML = modal_body;
+
+        document.getElementById('switch-to-login-btn').addEventListener('click', async () => {
+            renderUserModal("login");
+        })
+
+        document.getElementById('sign-up-btn').addEventListener('click', async () => {
+            let username = document.getElementById('username-input').value;
+            await signup(username)
+        })
+            
     }
     showModal('userModal');
 }
@@ -233,7 +275,7 @@ function renderUserModal(option) {
 function renderNavBar(isLoggedIn) {
     
     
-    let authnav = document.getElementById('auth-nav')
+    let authnav =  document.getElementById('auth-nav')
     
     if (isLoggedIn) {
 
@@ -245,24 +287,30 @@ function renderNavBar(isLoggedIn) {
         // Hide login button
         const useractions =`
         <div class="hidden group-hover:block absolute w-48 bg-white text-[#8B4513] rounded mt-1">
-            <a href="#" id="reassociate" class="block px-4 py-2 sec-nav-item" data-modal-target="userModal">Reassociate Address</a>
-            <a href="#" id="logout" class="block px-4 py-2">Logout</a>\
+            <a href="#" id="reassociate" class="block px-4 py-2 sec-nav-item" data-user-action="reassociate" data-modal-target="userModal">Reassociate Address</a>
+            <a href="#" id="logout" class="block px-4 py-2" data-user-action="logout">Logout</a>\
         </div>
         `
         authnav.innerHTML = main_auth + useractions;
         
     }
     else {
-        let main_auth = `
-        <img src="./assets/v_yes.png" alt="Login" class="w-6 h-6">
-        <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Login</span>
-        `
-        authnav.innerHTML = main_auth;
-
+        // Hide the other nav items
         const other_navitems = document.querySelectorAll('.pri-nav-item ');
         other_navitems.forEach((navitem) => {
             navitem.classList.toggle("hidden")
         });
+
+
+        let main_auth = `
+        <a href="#" class="pri-nav-item group" data-modal-target="userModal">
+        <img src="./assets/v_yes.png" alt="Login/Signup" class="w-6 h-6 pri-nav-item" data-user-action=auth data-modal-target="userModal">
+        <span class="hidden group-hover:block absolute text-[#8B4513] bg-white rounded px-1 py-0.5 text-xs">Login / Sign up</span>
+        </a>
+        `
+        authnav.innerHTML = main_auth;
+
+        
 
         
     }
@@ -287,6 +335,10 @@ function onLoadAuthEventHandlers(isLoggedIn) {
        
     }
     
+}
+
+function onSigninModalEventHandlers() {
+    document.getElementById()
 }
 
 window.addEventListener("load", async () => {

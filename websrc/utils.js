@@ -13,7 +13,7 @@ export async function notification(_text, self_destruct = true) {
     if (self_destruct === true) {
         console.log(_text)
 
-        await delay(4000);
+        await delay(1000);
         notificationOff()
     }
 }
