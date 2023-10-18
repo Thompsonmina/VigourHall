@@ -165,6 +165,23 @@ function listen_for_close_modal() {
       });
 }
 
+const enroll_buttons = document.querySelectorAll(".enroll-btn")
+console.log(enroll_buttons, "enroll buttons")
+enroll_buttons.forEach((button) => {
+    button.addEventListener('click', function () {
+        console.log("enroll button clicked")
+        const userResponse = confirm("Would you like to join this guild");
+
+        if (userResponse) {
+            console.log("User clicked OK");
+        } else {
+            console.log("User clicked Cancel or closed the dialog");
+        }
+
+    })
+})
+
+
 
 document.getElementById('connect-metamask').addEventListener('click', connectMetaMaskWallet);
 // document.getElementById('fitbit-btn').addEventListener('click', async () => {
@@ -344,8 +361,7 @@ function renderUserModal(option) {
 }
 
 function renderNavBar(isLoggedIn) {
-    
-    
+        
     let authnav =  document.getElementById('auth-nav')
     
     if (isLoggedIn) {
