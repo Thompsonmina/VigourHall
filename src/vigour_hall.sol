@@ -45,6 +45,7 @@ contract VigourHall {
     mapping(string => Challenge[] ) public challenges;
 
     string[] public usernames;
+    uint public totalusers;
 
     constructor() {
         owner = msg.sender;
@@ -96,6 +97,7 @@ contract VigourHall {
         require(users[_username].user_address == address(0), "User already exists");
         users[_username] = User(payable(msg.sender), _username, _securehash);
         usernames.push(_username);
+        totalusers++;
         emit UserRegistered(_username);
     }
 
@@ -140,6 +142,10 @@ contract VigourHall {
         emit ChallengeEnrolled(_username, challengetype);
     }
 
+    function numberOfEnrolledChallenges(string memory _username) public view returns (uint) {
+        return challenges[_username].length;
+    }
+
     function canBePromoted(uint currentTier, uint currentStreak) private pure returns (bool){
         if (currentTier == 1){
             if (currentStreak >= 20){
@@ -169,17 +175,16 @@ contract VigourHall {
     }
 
 
-// due to the stack limitation of solidity we will have to update state in to groups
 
 // Because the way the contract is designed the challenge completions do not neccessarly have to be submitted every day
 // as long as the trusted party calling the contract is able to verify the streaks and completions on thier end and send the appropriate state to the contract
-    function updateUserChallengesState(string memory username, uint challengetype, uint newCompletionsnum, bool continueStreak, uint streaknumber, string memory data_url) isVerifiedParty() public{
+    function updateUserChallengesState(string memory username, uint challengetype, uint newCompletionsnum, uint streaknumber, uint timestamp, bool continueStreak,  string memory data_url) isVerifiedParty() public{
         
         bool found = false;
         for (uint i = 0; i < challenges[username].length; i++){
             if (uint(challenges[username][i].challengeType) == challengetype){
                 found = true;
-                challenges[username][i].lastSubmissionDate = block.timestamp; 
+                challenges[username][i].lastSubmissionDate = timestamp; 
 
                 // increment the total completions for the challenge tier the user is a part of
                 if (challenges[username][i].tier1){
@@ -194,7 +199,7 @@ contract VigourHall {
 
                 if (continueStreak){
                     challenges[username][i].currentstreak += uint32(newCompletionsnum);
-                    if (challenges[username][i].currentstreak > challenges[username][i].longeststreak){
+                    if (challenges[username][i].currentstreak >= challenges[username][i].longeststreak){
                         challenges[username][i].longeststreak = challenges[username][i].currentstreak;
                     }
                 }

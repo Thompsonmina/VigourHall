@@ -183,35 +183,111 @@ enroll_buttons.forEach((button) => {
 
 
 
+function dateIsToday(customDateStr) {
+
+    if (customDateStr == null) {
+        console.log("No date stored.")
+        return false
+    }
+
+    const today = new Date();
+    const currentDay = today.getDate();
+    const currentMonth = today.getMonth() + 1;  // JavaScript months are 0-based
+    const currentYear = today.getFullYear();
+
+
+    const storedDay = parseInt(customDateStr.match(/(\d+)D/)[1], 10);
+    const storedMonth = parseInt(customDateStr.match(/(\d+)M/)[1], 10);
+    const storedYear = parseInt(customDateStr.match(/(\d+)Y/)[1], 10);
+
+    if (currentDay === storedDay && currentMonth === storedMonth && currentYear === storedYear) {
+        console.log("Today's date matches the stored date!");
+        return true
+    } else {
+        console.log("The dates do not match.");
+        return false
+    }
+}
+
+function generateDateString() {
+    const today = new Date();
+
+    // Extract the day, month, and year
+    const day = today.getDate();
+    const month = today.getMonth() + 1;  // JavaScript months are 0-based
+    const year = today.getFullYear();
+
+    let _date = `${day}D${month}M${year}Y`;
+    return _date
+}
+
+function getlastChallengeDate() {
+
+    // fetch from the contract hardcoded for now
+    
+    return "18D10M2023Y";
+}
+
 document.getElementById('connect-metamask').addEventListener('click', connectMetaMaskWallet);
-// document.getElementById('fitbit-btn').addEventListener('click', async () => {
 
-//     let { url, code_verifier, state } = await generate_auth_url(SCOPES);
-//     console.log("fitbit button clicked")
-//     console.log(url, "auth url")
-//     console.log("why twice")
-//     await notification("⌛ Loading Fitbit authorization page...");
+document.getElementById('fitbit-btn').addEventListener('click', async () => {
 
-//     setTimeout(function() {
-//         window.location.href = url;
-//     }, 2000);
+    let last_submitted = getlastChallengeDate()
 
-//     storeFitbitCredentials(state, code_verifier, null, "")
-//     // read message and execute the actual function
+    if (!dateIsToday(last_submitted)) {
+        
+        let scopes = getScopes()
+        let { url, code_verifier, state } = await generate_auth_url(scopes);
+        console.log("fitbit button clicked")
+        console.log(url, "auth url")
+        console.log("why twice")
+        await notification("⌛ Loading Fitbit authorization page...");
 
-// }
-// );
+        setTimeout(function () {
+            window.location.href = url;
+        }, 2000);
 
-function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, method = "") {
+        storeFitbitCredentials(state, code_verifier, null, "")
+        // read message and execute the actual function
+    }
+    else {
+        await notification("You have already submitted your data for today.")
+    }
+    
+});
 
-    const storeddata = { state, code_verifier, access_token, method };
+function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, method = "", last_submitted = null) {
+    const storeddata = { state, code_verifier, access_token, method, last_submitted };
     localStorage.setItem("fitbit_info", JSON.stringify(storeddata));
 }
 
 function getFitbitCredentials() { 
     const storeddata = localStorage.getItem("fitbit_info");
+    console.log(storeddata, "stored data")
     return JSON.parse(storeddata);
 }
+
+function getScopes() {  
+    return SCOPES
+}
+
+async function sendTriggerToServerToStoreChallengesData(state, access_token, code_verifier) {
+    console.log("sendTriggerToServerToStoreChallengesData")
+    console.log(state, access_token, code_verifier)
+    let scopes = getScopes()
+    const data = { state, access_token, code_verifier, scopes };
+    let response = fetch('/fitbit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+    })
+    const response_json = await response.json();
+    console.log(response_json)
+}
+
+
 
 // https://thompsonmina.github.io/VigourHall/?code=5cfc20ffaa7215d4e179d8a7a4335ac6699627f3&state=qByQ5R8CCmnNjTVZSDOg7Q#_=_
 
@@ -242,16 +318,14 @@ async function onClickConnect() {
 
 async function getAuthAndProceed() {
     const { state, code_verifier } = getFitbitCredentials();
-    console.log("getAuthAndProceed")
-    console.log(state, code_verifier)
+    console.log("getAuthAndProceed");
+    console.log(state, code_verifier);
     const { access_token, refresh_token, scope, user_id } = await get_access_token(window.location.href, code_verifier);
-    console.log(access_token, refresh_token, scope, user_id)
-    storeFitbitCredentials(state, code_verifier, access_token, "fitbit");
-    console.log("stored credentials")
-    console.log("calling proceed")
-    await proceed();
-
-
+    console.log(access_token, refresh_token, scope, user_id);
+    console.log("stored credentials");
+    console.log("calling proceed");
+    return access_token
+    // await proceed();
 }
 
 function renderEarningsModal() {
@@ -263,7 +337,6 @@ function renderProfileModal() {
     showModal('profileModal');
     listen_for_close_modal()
 }
-
 
 
 function renderUserModal(option) {
@@ -428,16 +501,21 @@ window.addEventListener("load", async () => {
     // await notification("⌛ Loading...");
     // await connectMetaMaskWallet();
     let isconnect = await isAccountConnected()
+    console.log(window.location.href, "window location")
     const url = new URL(window.location.href);
-
-    if ("code" in url.searchParams) {
-        const params = new URLSearchParams(url.search);
+    const params = new URLSearchParams(url.search);
+    console.log(url.searchParams, params.get("cod"), "url")
+    if (params.get("code")) {
         const code = params.get('code');
         const state = params.get('state');
         console.log(code, state)
 
+        let auth = await getAuthAndProceed()
+        console.log(auth, "auth")
 
+        
     }
+ 
     await notification("Yeahh")
 
     let logged_in = await isLoggedIn(true)

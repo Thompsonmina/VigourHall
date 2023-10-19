@@ -104,4 +104,4 @@ const get_sleep = async (access_token, startdate, enddate) => {
 // get_water_consumption(access_token, '2023-10-01', '2023-10-09').then(tokens => console.log(tokens));
 // get_sleep(access_token, '2023-10-01', '2023-10-09').then(tokens => console.log(tokens));
 // // console.log(tokens);
-// // export { generate_auth_url, get_access_token, SCOPES, client_id };
+export { generate_auth_url, get_access_token, SCOPES, client_id };
