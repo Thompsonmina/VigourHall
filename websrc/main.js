@@ -1,8 +1,9 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
 import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
-import { logout, isLoggedIn, generate_mnemonic } from "./user";
+import { logout, isLoggedIn, generate_mnemonic, get_username } from "./user";
 import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
+import { isEnrolledInChallenge, enrollInChallenge } from "./contract";
 
 console.log(generate_mnemonic())
 const login = async (username) => {
@@ -165,22 +166,6 @@ function listen_for_close_modal() {
       });
 }
 
-const enroll_buttons = document.querySelectorAll(".enroll-btn")
-console.log(enroll_buttons, "enroll buttons")
-enroll_buttons.forEach((button) => {
-    button.addEventListener('click', function () {
-        console.log("enroll button clicked")
-        const userResponse = confirm("Would you like to join this guild");
-
-        if (userResponse) {
-            console.log("User clicked OK");
-        } else {
-            console.log("User clicked Cancel or closed the dialog");
-        }
-
-    })
-})
-
 
 
 function dateIsToday(customDateStr) {
@@ -255,6 +240,25 @@ document.getElementById('fitbit-btn').addEventListener('click', async () => {
     }
     
 });
+
+const enroll_buttons = document.querySelectorAll(".enroll-btn")
+enroll_buttons.forEach((button) => {
+    button.addEventListener('click', async () => {
+
+        let username = getusername()
+        let isEnrolled = await isEnrolledInChallenge(provider, username, challengetype)
+        console.log(isEnrolled, "isEnrolled")
+        if (isEnrolled) {
+            await notification("You are already enrolled in this challenge.")
+        }
+        else {
+
+            enrollInChallenge(signer, username, challengetype)
+            await notification("You have been enrolled in this challenge.")
+        }
+    })
+})
+
 
 function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, method = "", last_submitted = null) {
     const storeddata = { state, code_verifier, access_token, method, last_submitted };

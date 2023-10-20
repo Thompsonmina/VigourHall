@@ -121,7 +121,7 @@ contract VigourHall {
         verifiedParties.push(new_party);
     }
 
-    function _notAlreadyEnrolled(string memory _username, uint challengetype) private view returns (bool){
+    function notAlreadyEnrolled(string memory _username, uint challengetype) public view returns (bool){
         for (uint i = 0; i < challenges[_username].length; i++){
             if (uint(challenges[_username][i].challengeType) == challengetype){
                 return false;
@@ -132,7 +132,7 @@ contract VigourHall {
 
     function enrollInChallenge(string memory _username, uint challengetype) isUser(_username) public{
         require(challengetype >= 0 && challengetype <= 4, "Invalid challenge type");
-        require(_notAlreadyEnrolled(_username, challengetype), "Already enrolled in challenge");
+        require(notAlreadyEnrolled(_username, challengetype), "Already enrolled in challenge");
         
         if (challengetype == 0){
             challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0, ChallengeType.Water, ""));

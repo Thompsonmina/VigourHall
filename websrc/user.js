@@ -15,6 +15,10 @@ export function generate_mnemonic() {
     return mnemonic.phrase;
 }
 
+export async function get_username() {
+    return "tom"
+}
+
 export function isValidEthereumAddress(address) {
     let error_message = "";
     let is_valid = true
