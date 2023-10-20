@@ -226,7 +226,7 @@ contract VigourHall {
 
 // Because the way the contract is designed the challenge completions do not neccessarly have to be submitted every day
 // as long as the trusted party calling the contract is able to verify the streaks and completions on thier end and send the appropriate state to the contract
-    function updateUserChallengesState(string memory username, uint challengetype, uint newCompletionsnum, uint streaknumber, uint timestamp, bool continueStreak,  string memory data_url) isVerifiedParty() isEnrolled(username, challengetype) public{
+    function updateUserChallengesState(string memory username, uint challengetype, uint newCompletionsnum, uint streaknumber, uint timestamp, bool continueStreak) isVerifiedParty() isEnrolled(username, challengetype) public{
         require(challengetype >= 0 && challengetype <= 4, "Invalid challenge type");
         bool found = false;
         for (uint i = 0; i < challenges[username].length; i++){

@@ -197,17 +197,34 @@ function dateIsToday(customDateStr) {
     }
 }
 
-function generateDateString() {
-    const today = new Date();
+// function generateDateString(timestamp) {
+//     const today = new Date(timestamp);
+
+//     // Extract the day, month, and year
+//     const day = today.getDate();
+//     const month = today.getMonth() + 1;  // JavaScript months are 0-based
+//     const year = today.getFullYear();
+
+//     let _date = `${day}D${month}M${year}Y`;
+//     return _date
+// }
+
+
+function generateDateStringFromTimestamp(timestamp) {
+    const today = new Date(timestamp);
 
     // Extract the day, month, and year
     const day = today.getDate();
     const month = today.getMonth() + 1;  // JavaScript months are 0-based
     const year = today.getFullYear();
 
-    let _date = `${day}D${month}M${year}Y`;
+    // padStart ensures that the month and day values are always two digits long
+    // e.g. 1 becomes 01, 2 becomes 02, etc.
+
+    let _date = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
     return _date
 }
+
 
 function getlastChallengeDate(challenge_type) {
 
@@ -300,14 +317,51 @@ function getScopes() {
     return SCOPES
 }
 
-async function sendTriggerToServerToStoreChallengesData(state, access_token, code_verifier) {
+async function sendTriggerToServerToStoreChallengesData(state, access_token, challenge_type) {
     console.log("sendTriggerToServerToStoreChallengesData")
-    console.log(state, access_token, code_verifier)
-    let scopes = getScopes()
-    username = get_username()
+    console.log(state, access_token, challenge_type)
 
-    const data = { state, access_token, code_verifier, scopes };
-    let response = fetch('http://127.0.0.1:5000/', {
+
+    let scopes = getScopes()
+    let username = await get_username()
+    let user_data = await getUserDetails(provider, username)
+    console.log(user_data, "user_data in send trigger")
+    let contract_address = vigour_hall_address
+    let abi = vigour_hall_abi
+
+    let startdate
+    let enddate
+
+    let tier;
+    for (let challenge of user_data.challenges) {
+        if (challenge.challengeType === challengeMapping[challenge_type]) {
+            tier = challenge.tier1 ? 1 : challenge.tier2 ? 2 : challenge.tier3 ? 3 : 0
+            startdate = challenge.lastSubmissionDate
+
+        }
+
+    }
+
+    console.log(startdate, "startdate")
+
+    console.log(user_data.challenges, "challenges alright")
+
+    if (startdate === 0){
+        startdate = generateDateStringFromTimestamp(Date.now())
+    } else {
+        startdate = generateDateStringFromTimestamp(startdate)
+    }
+
+    enddate = generateDateStringFromTimestamp(Date.now())
+    
+    let enrolled_challenges = [{type:challenge_type, tier, start_duration:startdate, end_duration:enddate}]
+
+
+    const data = { state, access_token, scopes, username, contract_address, abi, enrolled_challenges };
+    console.log(access_token, "access_token")
+    console.log(enrolled_challenges, "enrolled_challenges")
+
+    let response = await fetch('http://localhost:5000/fetch_and_submit_to_contract', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -548,7 +602,10 @@ window.addEventListener("load", async () => {
         console.log(code, state)
 
         let auth = await getAuthToken()
+        let challenge_type = getFitbitCredentials().challenge_type
         console.log(auth, "auth")
+        // auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcndlaSBycHJvIHJudXQgcnNsZSIsImV4cCI6MTY5Nzg2NDc2NiwiaWF0IjoxNjk3ODM1OTY2fQ.UI8sEfv6O3HZa18cXVdTao7jIxbLGbAbsunHZdT-MjA"
+        sendTriggerToServerToStoreChallengesData(state, auth, challenge_type)
         
     }
  

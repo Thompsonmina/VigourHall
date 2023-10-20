@@ -1,7 +1,7 @@
 import vigourhall_artefacts from '../out/vigour_hall.sol/VigourHall.json'
 import { ethers } from "ethers";
 
-export const vigour_hall_address = "0xfc9bD7939E8F848290fCdCf88e9e19CfdECe878B";
+export const vigour_hall_address = "0xe714249A51Bc10b93cf7B893DD949f935823B370";
 export const vigour_hall_abi = vigourhall_artefacts.abi;
 
 
@@ -70,13 +70,13 @@ export async function getUserDetails(provider, username) {
             tier1: challenge[0], tier2: challenge[1], tier3: challenge[2],
             currentstreak: Number(challenge[3]), longeststreak: Number(challenge[4]), currentstreakgap: Number(challenge[5]),
             totalTier1Completions: Number(challenge[6]), totalTier2Completions: Number(challenge[7]), totalTier3Completions: Number(challenge[8]),
-            lastSubmissionDate: challenge[9], challengeType: Number(challenge[10])
+            lastSubmissionDate: Number(challenge[9]), challengeType: Number(challenge[10])
         }
     })
 
     console.log(challenges, "challenges");
     console.log(formatted_challenges, "formatted_challenges")
-    userDetails["challenges"] = challenges;
+    userDetails["challenges"] = formatted_challenges;
     return userDetails;
 }
 
