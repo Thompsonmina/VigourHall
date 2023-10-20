@@ -21,7 +21,7 @@ contract VigourHall {
         Sleep,
         BodyFat,
         Steps,
-        Exercise
+        Activity
     }
 
     struct Challenge{
@@ -82,6 +82,17 @@ contract VigourHall {
         _;
     }
 
+    modifier isEnrolled(string memory _username, uint challengetype) {
+        bool found = false;
+        for (uint i = 0; i < challenges[_username].length; i++){
+            if (uint(challenges[_username][i].challengeType) == challengetype){
+                found = true;
+            }
+        }
+        require(found, "Not enrolled in challenge");
+        _;
+    }
+
     function changePublicKey(string memory newServerPublicKey) isOwner() public {
         serverPublicKey = newServerPublicKey;
         emit PublicKeyChanged(newServerPublicKey);
@@ -92,7 +103,6 @@ contract VigourHall {
         emit OwnerChanged(new_owner);
     }
     
-
     function registerUser(string memory _username, string memory _securehash) public {
         require(users[_username].user_address == address(0), "User already exists");
         users[_username] = User(payable(msg.sender), _username, _securehash);
@@ -137,7 +147,7 @@ contract VigourHall {
             challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0,ChallengeType.Steps, ""));
         }
         else if (challengetype == 4){
-            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0, ChallengeType.Exercise, ""));
+            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0, ChallengeType.Activity, ""));
         }
         emit ChallengeEnrolled(_username, challengetype);
     }
@@ -174,12 +184,50 @@ contract VigourHall {
         return false;
     }
 
+    function ChallengeTierCompletionParameters(uint challengetype) public pure returns (uint, uint, uint){
+        require(challengetype >= 0 && challengetype <= 4, "Invalid challenge type");
+        uint tier1CompletionUnits;
+        uint tier2CompletionUnits;
+        uint tier3CompletionUnits;
+    
+        if (challengetype == 0){
+            // The water challenge measured in millilitres
+            tier1CompletionUnits = 1000;
+            tier2CompletionUnits = 2500;
+            tier3CompletionUnits = 4000;
+        }
+        else if (challengetype == 1){
+            // The sleep challenge measured in minutes
+            tier1CompletionUnits = 300;
+            tier2CompletionUnits = 360;
+            tier3CompletionUnits = 480;
+        }
+        else if (challengetype == 2){
+            // The body fat challenge measured in percentage
+            tier1CompletionUnits = 18;
+            tier2CompletionUnits = 15;
+            tier3CompletionUnits = 13;
+        }
+        else if (challengetype == 3){
+            // The steps challenge measured in steps
+            tier1CompletionUnits = 6000;
+            tier2CompletionUnits = 10000;
+            tier3CompletionUnits = 20000;
+        }
+        else if (challengetype == 4){
+            // The Activity challenge measured in minutes
+            tier1CompletionUnits = 60;
+            tier2CompletionUnits = 120;
+            tier3CompletionUnits = 240;
+        }
 
+        return (tier1CompletionUnits, tier2CompletionUnits, tier3CompletionUnits);
+    }
 
 // Because the way the contract is designed the challenge completions do not neccessarly have to be submitted every day
 // as long as the trusted party calling the contract is able to verify the streaks and completions on thier end and send the appropriate state to the contract
-    function updateUserChallengesState(string memory username, uint challengetype, uint newCompletionsnum, uint streaknumber, uint timestamp, bool continueStreak,  string memory data_url) isVerifiedParty() public{
-        
+    function updateUserChallengesState(string memory username, uint challengetype, uint newCompletionsnum, uint streaknumber, uint timestamp, bool continueStreak,  string memory data_url) isVerifiedParty() isEnrolled(username, challengetype) public{
+        require(challengetype >= 0 && challengetype <= 4, "Invalid challenge type");
         bool found = false;
         for (uint i = 0; i < challenges[username].length; i++){
             if (uint(challenges[username][i].challengeType) == challengetype){
@@ -211,10 +259,8 @@ contract VigourHall {
 
         }
 
-
         require(found, "Challenge not found");
-        emit ChallengeCompleted(username, challengetype, newCompletionsnum);
-
+        emit ChallengeCompleted(username, challengetype, newCompletionsnum, streaknumber, timestamp, continueStreak);
     }
 
     function getPromotion(string memory username, uint challengetype) isUser(username) public returns (bool){
@@ -257,14 +303,11 @@ contract VigourHall {
     event UserRegistered(string username);
     event UserReassociated(string username);
     event ChallengeEnrolled(string username, uint challengetype);
-    event ChallengeCompleted(string username, uint challengetype, uint completions);
+    event ChallengeCompleted(string username, uint challengetype, uint completions, uint streaknumber, uint timestamp, bool continueStreak);
     event ChallengeTierPromoted(string username, uint challengetype, uint newtier);
     event ChallengeTierDemoted(string username, uint challengetype, uint newtier);
 
 
-
-
     // compare two strings 
-    
 
 }

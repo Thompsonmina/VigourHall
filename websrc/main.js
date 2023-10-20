@@ -533,8 +533,6 @@ window.addEventListener("load", async () => {
         }    
     }
 
-    
-
 });
 
 
