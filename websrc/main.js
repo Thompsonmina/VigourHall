@@ -1,9 +1,9 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
-import { notification, notificationOff, format_to_wei, convertIterableToMap, delay } from "./utils";
+import { notification, notificationOff, format_to_wei, delay, showModal, hideModal } from "./utils";
 import { logout, isLoggedIn, generate_mnemonic, get_username } from "./user";
 import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
-import { isEnrolledInChallenge, enrollInChallenge } from "./contract";
+import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails } from "./contract";
 
 console.log(generate_mnemonic())
 const login = async (username) => {
@@ -37,6 +37,8 @@ let signer;
 let provider;
 let current_address;
 let contract;
+
+const challengeMapping = {water: 1, sleep: 2, bodyfat: 3, steps: 4, activity: 5}
 
 async function isAccountConnected() {
     const accounts = await ethereum.request({ method: 'eth_accounts' });
@@ -72,22 +74,23 @@ const connectMetaMaskWallet = async function () {
                 console.error(error);
             }
             console.log("approved")
-            try {
+        }
+
+        try {
                 
-                provider = new ethers.BrowserProvider(
-                    ethereum,
-                    "any"
-                );
-                console.log("here?");
-                
-                signer = await provider.getSigner();
-                console.log("passed finder")
+            provider = new ethers.BrowserProvider(
+                ethereum,
+                "any"
+            );
+            console.log("here?");
             
-            }
-            catch (error) {
-                await notification(`⚠️ ${error}.`)
-                console.error(error);
-            }
+            signer = await provider.getSigner();
+            console.log("passed finder")
+        
+        }
+        catch (error) {
+            await notification(`⚠️ ${error}.`)
+            console.error(error);
         }
     }
     else {
@@ -206,7 +209,7 @@ function generateDateString() {
     return _date
 }
 
-function getlastChallengeDate() {
+function getlastChallengeDate(challenge_type) {
 
     // fetch from the contract hardcoded for now
     
@@ -215,53 +218,75 @@ function getlastChallengeDate() {
 
 document.getElementById('connect-metamask').addEventListener('click', connectMetaMaskWallet);
 
-document.getElementById('fitbit-btn').addEventListener('click', async () => {
 
-    let last_submitted = getlastChallengeDate()
-
-    if (!dateIsToday(last_submitted)) {
+const challenge_completion_buttons = document.querySelectorAll(".challenge-completion-btn")
+challenge_completion_buttons.forEach((button) => {
+    button.addEventListener('click', async () => {
         
-        let scopes = getScopes()
-        let { url, code_verifier, state } = await generate_auth_url(scopes);
-        console.log("fitbit button clicked")
-        console.log(url, "auth url")
-        console.log("why twice")
-        await notification("⌛ Loading Fitbit authorization page...");
+        let username = get_username()
+        let challengetype = button.getAttribute('data-challenge-type')
+        let last_submitted = getlastChallengeDate(challengetype)
 
-        setTimeout(function () {
-            window.location.href = url;
-        }, 2000);
+        let isEnrolled = await isEnrolledInChallenge(provider, username, challengeMapping[challengetype])
+        if (!isEnrolled) {
+            
+            notification("You can not submit to this challenge. You need to be enrolled  first!")
+        }
+        else if (dateIsToday(last_submitted)) {
+            await notification("You have already submitted your data for today.")
+            
+        }
+        else {
 
-        storeFitbitCredentials(state, code_verifier, null, "")
-        // read message and execute the actual function
-    }
-    else {
-        await notification("You have already submitted your data for today.")
-    }
+            let scopes = getScopes()
+            let { url, code_verifier, state } = await generate_auth_url(scopes);
+            console.log("fitbit button clicked")
+            console.log(url, "auth url")
+            console.log("why twice")
+            await notification("⌛ Loading Fitbit authorization page...");
+
+            setTimeout(function () {
+                window.location.href = url;
+            }, 1100);
+
+            storeFitbitCredentials(state, code_verifier, null, challengetype)
+        }
     
+    })
 });
 
 const enroll_buttons = document.querySelectorAll(".enroll-btn")
 enroll_buttons.forEach((button) => {
     button.addEventListener('click', async () => {
 
-        let username = getusername()
-        let isEnrolled = await isEnrolledInChallenge(provider, username, challengetype)
-        console.log(isEnrolled, "isEnrolled")
-        if (isEnrolled) {
-            await notification("You are already enrolled in this challenge.")
-        }
-        else {
+        let username = await get_username()
+        console.log(username, "username")   
+        let challengetype = button.getAttribute('data-challenge-type');
+        console.log(challengetype, "challengetype")
+        challengetype = challengeMapping[challengetype]
+        console.log(challengetype, "challengetype")
 
-            enrollInChallenge(signer, username, challengetype)
-            await notification("You have been enrolled in this challenge.")
+        try {
+            console.log(provider, "provider")
+            let isEnrolled = await isEnrolledInChallenge(provider, username, challengetype)
+            console.log(isEnrolled, "isEnrolled")
+            if (isEnrolled) {
+                await notification("You are already enrolled in this challenge.")
+            }
+            else {
+
+                enrollInChallenge(signer, username, challengetype)
+                await notification("You have been enrolled in this challenge.")
+            }
+        }
+        catch (error) {
+            console.log(error)
         }
     })
 })
 
-
-function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, method = "", last_submitted = null) {
-    const storeddata = { state, code_verifier, access_token, method, last_submitted };
+function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, challenge_type = "") {
+    const storeddata = { state, code_verifier, access_token, challenge_type};
     localStorage.setItem("fitbit_info", JSON.stringify(storeddata));
 }
 
@@ -279,8 +304,10 @@ async function sendTriggerToServerToStoreChallengesData(state, access_token, cod
     console.log("sendTriggerToServerToStoreChallengesData")
     console.log(state, access_token, code_verifier)
     let scopes = getScopes()
+    username = get_username()
+
     const data = { state, access_token, code_verifier, scopes };
-    let response = fetch('/fitbit', {
+    let response = fetch('http://127.0.0.1:5000/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -291,9 +318,6 @@ async function sendTriggerToServerToStoreChallengesData(state, access_token, cod
     console.log(response_json)
 }
 
-
-
-// https://thompsonmina.github.io/VigourHall/?code=5cfc20ffaa7215d4e179d8a7a4335ac6699627f3&state=qByQ5R8CCmnNjTVZSDOg7Q#_=_
 
 async function onClickConnect() {
     console.log("onClickConnect triggered.")
@@ -320,7 +344,7 @@ async function onClickConnect() {
     // }
 }
 
-async function getAuthAndProceed() {
+async function getAuthToken() {
     const { state, code_verifier } = getFitbitCredentials();
     console.log("getAuthAndProceed");
     console.log(state, code_verifier);
@@ -329,7 +353,6 @@ async function getAuthAndProceed() {
     console.log("stored credentials");
     console.log("calling proceed");
     return access_token
-    // await proceed();
 }
 
 function renderEarningsModal() {
@@ -503,20 +526,29 @@ window.addEventListener("load", async () => {
     // console.log("window loaded")
     console.log("window loaded")
     // await notification("⌛ Loading...");
-    // await connectMetaMaskWallet();
+    await connectMetaMaskWallet();
+    console.log(provider, "provider")
     let isconnect = await isAccountConnected()
+
+
+    let users = await getUsers(provider)
+    console.log(users, "users")
+
+    let details = await getUserDetails(provider, users[0])
+    console.log(details, "details")
+
+
     console.log(window.location.href, "window location")
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
-    console.log(url.searchParams, params.get("cod"), "url")
+    console.log(url.searchParams, params.get("code"), "url")
     if (params.get("code")) {
         const code = params.get('code');
         const state = params.get('state');
         console.log(code, state)
 
-        let auth = await getAuthAndProceed()
+        let auth = await getAuthToken()
         console.log(auth, "auth")
-
         
     }
  
@@ -540,23 +572,3 @@ window.addEventListener("load", async () => {
 });
 
 
-function hideModal(id) {
-    const body = document.querySelector("body")
-    body.classList.toggle("overflow-hidden");
-
-    const modal = document.getElementById(id);
-    if (! modal.classList.contains('hidden')) {
-        modal.classList.add('hidden');
-    }
-}
-  
-function showModal(id) {
-    const body = document.querySelector("body")
-    console.log(body)
-    body.classList.toggle("overflow-hidden");
-
-    const modal = document.getElementById(id);
-    console.log(modal, "modal")
-    modal.classList.remove('hidden');
-    
-}

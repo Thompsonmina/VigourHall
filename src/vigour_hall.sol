@@ -13,6 +13,7 @@ contract VigourHall {
         address payable user_address;
         string username;
         string securehash;
+        string userdata_cid;
 
     }
 
@@ -36,7 +37,6 @@ contract VigourHall {
         uint64 totalTier3Completions;
         uint lastSubmissionDate;
         ChallengeType challengeType;
-        string userdata_cid;
     }
 
 
@@ -105,7 +105,7 @@ contract VigourHall {
     
     function registerUser(string memory _username, string memory _securehash) public {
         require(users[_username].user_address == address(0), "User already exists");
-        users[_username] = User(payable(msg.sender), _username, _securehash);
+        users[_username] = User(payable(msg.sender), _username, _securehash, "");
         usernames.push(_username);
         totalusers++;
         emit UserRegistered(_username);
@@ -135,19 +135,19 @@ contract VigourHall {
         require(notAlreadyEnrolled(_username, challengetype), "Already enrolled in challenge");
         
         if (challengetype == 0){
-            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0, ChallengeType.Water, ""));
+            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0, ChallengeType.Water));
         }
         else if (challengetype == 1){
-            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0,ChallengeType.Sleep, ""));
+            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0,ChallengeType.Sleep));
         }
         else if (challengetype == 2){
-            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0,ChallengeType.BodyFat, ""));
+            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0,ChallengeType.BodyFat));
         }
         else if (challengetype == 3){
-            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0,ChallengeType.Steps, ""));
+            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0,ChallengeType.Steps));
         }
         else if (challengetype == 4){
-            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0, ChallengeType.Activity, ""));
+            challenges[_username].push(Challenge(true, false, false, 0, 0, 0, 0,0,0,0, ChallengeType.Activity));
         }
         emit ChallengeEnrolled(_username, challengetype);
     }

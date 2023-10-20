@@ -1,4 +1,4 @@
-const SCOPES = ['activity', 'heartrate', 'location', 'nutrition', 'profile', 'settings', 'sleep', 'social', 'weight'] 
+const SCOPES = ['activity', 'nutrition', 'profile',  'sleep', 'social', 'weight'] 
 const client_id = '23R8ZL';
 const base_url = "https://vigourhall-8014c762e84c.herokuapp.com";
 const fitbit_base_url = "https://api.fitbit.com/1/user/-/";
@@ -81,8 +81,6 @@ const get_sleep = async (access_token, startdate, enddate) => {
     });
     const response_json = await sleepResponse.json();
     return response_json;
-
-
 
 }
 

@@ -29,3 +29,24 @@ export function convertIterableToMap(key, arrayOfObjects) {
     }
     return newObject;
 }
+
+export function hideModal(id) {
+    const body = document.querySelector("body")
+    body.classList.toggle("overflow-hidden");
+
+    const modal = document.getElementById(id);
+    if (! modal.classList.contains('hidden')) {
+        modal.classList.add('hidden');
+    }
+}
+  
+export function showModal(id) {
+    const body = document.querySelector("body")
+    console.log(body)
+    body.classList.toggle("overflow-hidden");
+
+    const modal = document.getElementById(id);
+    console.log(modal, "modal")
+    modal.classList.remove('hidden');
+    
+}

@@ -1,4 +1,4 @@
-import { get_users } from "./contract";
+// import { get_users } from "./contract";
 
 const ethers = require("ethers")
 
