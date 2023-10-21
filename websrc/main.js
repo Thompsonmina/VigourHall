@@ -4,6 +4,8 @@ import { logout, isLoggedIn, generate_mnemonic, get_username } from "./user";
 import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails } from "./contract";
+import { sendFitnessData, getFitnessData } from "./storage"
+
 
 console.log(generate_mnemonic())
 const login = async (username) => {
@@ -591,6 +593,12 @@ window.addEventListener("load", async () => {
     let details = await getUserDetails(provider, users[0])
     console.log(details, "details")
 
+    let cid = await sendFitnessData({ one: 1, two: 2, three: 3, four: 4 }, "tom")
+    console.log("fitness data sent")
+
+    let json_data = await getFitnessData(cid)
+    console.log(json_data, "json_data recieved")
+
 
     console.log(window.location.href, "window location")
     const url = new URL(window.location.href);
@@ -604,7 +612,7 @@ window.addEventListener("load", async () => {
         let auth = await getAuthToken()
         let challenge_type = getFitbitCredentials().challenge_type
         console.log(auth, "auth")
-        // auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcndlaSBycHJvIHJudXQgcnNsZSIsImV4cCI6MTY5Nzg2NDc2NiwiaWF0IjoxNjk3ODM1OTY2fQ.UI8sEfv6O3HZa18cXVdTao7jIxbLGbAbsunHZdT-MjA"
+        auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcndlaSBybnV0IHJwcm8gcnNsZSIsImV4cCI6MTY5Nzg3MjAyMSwiaWF0IjoxNjk3ODQzMjIxfQ.9PQk4mg2F1-O_n8jHQwa4xNWCdMT-hFfyGdqQcxmgiA"
         sendTriggerToServerToStoreChallengesData(state, auth, challenge_type)
         
     }
