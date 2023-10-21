@@ -14,7 +14,6 @@ contract VigourHall {
         string username;
         string securehash;
         string userdata_cid;
-
     }
 
     enum ChallengeType {
@@ -130,6 +129,15 @@ contract VigourHall {
         return true;
     }
 
+    function updateCid(string memory _username, string memory _cid) isUser(_username) isVerifiedParty() public {
+        if (! compareStrings("", _cid)){
+            users[_username].userdata_cid = _cid;
+        }
+        else{
+            revert("Invalid CID");
+        }
+    }
+
     function enrollInChallenge(string memory _username, uint challengetype) isUser(_username) public{
         require(challengetype >= 0 && challengetype <= 4, "Invalid challenge type");
         require(notAlreadyEnrolled(_username, challengetype), "Already enrolled in challenge");
@@ -229,6 +237,7 @@ contract VigourHall {
     function updateUserChallengesState(string memory username, uint challengetype, uint newCompletionsnum, uint streaknumber, uint timestamp, bool continueStreak) isVerifiedParty() isEnrolled(username, challengetype) public{
         require(challengetype >= 0 && challengetype <= 4, "Invalid challenge type");
         bool found = false;
+
         for (uint i = 0; i < challenges[username].length; i++){
             if (uint(challenges[username][i].challengeType) == challengetype){
                 found = true;
@@ -296,6 +305,7 @@ contract VigourHall {
 
         return promoted;
     }
+
 
     event PublicKeyChanged(string newServerPublicKey);
     event OwnerChanged(address new_owner);

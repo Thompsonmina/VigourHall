@@ -15,7 +15,7 @@
     <div class="container mx-auto">
       <div class="flex items-center justify-between">
         <a href="#" class="flex items-center">
-          <img src="./assets/v_yes.png" alt="Vigour Hall Logo" class="w-10 h-10 mr-2">
+          <img src="./assets/v_hall_logo.png" alt="Vigour Hall Logo" class="w-10 h-10 mr-2">
           <span class="text-2xl font-semibold">Vigour Hall</span>
         </a>
         <div class="flex items-center space-x-4">
@@ -54,7 +54,7 @@
     <!-- Single Challenge Card -->
     <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
       <!-- Logo (or Image) -->
-      <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
+      <img class="w-full h-64 object-cover" src="./assets/sleep.png" alt="Challenge 1 Logo">
       
       <!-- Summary View -->
       <div id="challenge1-summary" class="px-6 py-4">
@@ -84,7 +84,7 @@
     </div>
     <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
-        <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
+        <img class="w-full h-64 object-cover" src="./assets/water.png" alt="Challenge 1 Logo">
         
         <!-- Summary View -->
         <div id="challenge1-summary" class="px-6 py-4">
@@ -114,7 +114,7 @@
       </div>
       <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
-        <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
+        <img class="w-full h-64 object-cover" src="./assets/body_fat.png" alt="Challenge 1 Logo">
         
         <!-- Summary View -->
         <div id="challenge1-summary" class="px-6 py-4">
@@ -144,7 +144,7 @@
       </div>
       <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
-        <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
+        <img class="w-full h-64 object-cover" src="./assets/steps.png" alt="Challenge 1 Logo">
         
         <!-- Summary View -->
         <div id="challenge1-summary" class="px-6 py-4">
@@ -174,7 +174,7 @@
       </div>
       <div class="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
         <!-- Logo (or Image) -->
-        <img class="w-full h-64 object-cover" src="./assets/v_yes.png" alt="Challenge 1 Logo">
+        <img class="w-full h-64 object-cover" src="./assets/active.png" alt="Challenge 1 Logo">
         
         <!-- Summary View -->
         <div id="challenge1-summary" class="px-6 py-4">
@@ -329,6 +329,29 @@
           Connect with MetaMask
         </button>
       </div>
+
+
+      <!-- Modal: Submit Challenge -->
+<div id="submitChallengeModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg w-1/2">
+    <div class="flex justify-between items-center p-6">
+      <h2 class="text-2xl font-bold text-black">Submit Challenge</h2>
+      <button class="text-lg text-black font-semibold modal-close-btn">&times;</button>
+    </div>
+    <form id="challengeForm" class="p-6">
+      <div class="mb-4">
+        <input type="checkbox" id="saveData" name="saveData">
+        <label for="saveData" class="ml-2 text-black">Save Submission Data(Your data will be encrypted and stored on filecoin)</label>
+      </div>
+      <div id="passphraseBox" class="mb-4 hidden">
+        <label for="passphrase" class="block mb-2 text-black">Input 12-word Passphrase:</label>
+        <input type="text" id="passphrase-submit" name="passphrase" class="w-full p-2 border rounded">
+      </div>
+      <button type="submit" id="submitChallengeConfirmBtn" class="bg-blue-500 text-white p-2 rounded  ">Submit Challenge</button>
+    </form>
+  </div>
+</div>
+
       
       
       

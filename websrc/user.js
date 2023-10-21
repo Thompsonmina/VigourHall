@@ -10,10 +10,6 @@ export async function logout() {
     return true;
 }
 
-export function generate_mnemonic() {
-    const mnemonic = ethers.Wallet.createRandom().mnemonic;
-    return mnemonic.phrase;
-}
 
 export async function get_username() {
     return "tom"

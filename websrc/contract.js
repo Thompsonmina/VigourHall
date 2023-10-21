@@ -55,7 +55,7 @@ export async function getUserDetails(provider, username) {
     console.log(userDetails)
     console.log(userDetails[0])
 
-    userDetails = {address: userDetails[0], username: userDetails[1], storage_cid: userDetails[2]}
+    userDetails = {address: userDetails[0], username: userDetails[1], secure_hash:userDetails[2], storage_cid: userDetails[3]}
 
     const enrolledNums = Number(await contract.numberOfEnrolledChallenges(username))
 

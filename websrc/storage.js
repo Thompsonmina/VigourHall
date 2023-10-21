@@ -1,5 +1,4 @@
-
-
+import { encrypt, decrypt } from "./encrypt.js";
 // Generate a JSON file
 
 function generateJSONFile(data) {
@@ -10,6 +9,66 @@ function generateJSONFile(data) {
     return file
 }
 
+function encryptFitnessData(data, mnemonic_phrase) {
+
+    console.log("whats going on here", data)
+    for (let key in data) {
+        console.log(key, "key")
+        if (data.hasOwnProperty(key)) { // This ensures you're not iterating over prototype propertie
+            for (let nestkey in data[key]) {
+                console.log(nestkey, "nestkey")
+                console.log(key); // This will log the keys: a, b, c
+                console.log(data[key][nestkey], "data[key][nestkey]")
+                data[key][nestkey] = encrypt(JSON.stringify(data[key][nestkey]), mnemonic_phrase);
+            }
+        }
+    }
+    return data
+}
+
+function decryptFitnessData(data, mnemonic_phrase) {
+    for (let key in data) {
+        if (data.hasOwnProperty(key)) { // This ensures you're not iterating over prototype propertie
+            for (let nestkey in data[key]) {
+                data[key][nestkey] = decrypt(JSON.parse(data[key][nestkey]), mnemonic_phrase);
+            }
+        }
+    }
+    return data
+}
+
+function oneLevelDeepMerge(obj1, obj2) {
+    const output = {...obj1};  // Start with a shallow copy of obj1
+    
+    for (const [key, value] of Object.entries(obj2)) {
+      if (typeof value === 'object' && !Array.isArray(value) && value !== null && obj1.hasOwnProperty(key) && typeof obj1[key] === 'object') {
+        // If the property is an object on both obj1 and obj2, merge them
+        output[key] = {...obj1[key], ...value};
+      } else {
+        // Otherwise, use the value from obj2
+        output[key] = value;
+      }
+    }
+    
+    return output;
+}
+  
+
+export async function saveNewFitnessData(new_data, mnemonic_phrase, username, cid = null) {
+
+    let encrypted_new_data = encryptFitnessData(new_data, mnemonic_phrase);
+    console.log(encrypted_new_data, "encrypted_new_data")
+
+    if (cid == null) {
+        cid = await sendFitnessData(encrypted_new_data);
+        return cid
+    }
+
+    let current_data = await getFitnessData(cid);
+    let merged_data = oneLevelDeepMerge(current_data, encrypted_new_data);
+    cid = await sendFitnessData(merged_data, username);
+    return cid
+}
 
 export async function sendFitnessData(data, username) {
     let file = generateJSONFile(data)
@@ -28,8 +87,7 @@ export async function sendFitnessData(data, username) {
     else {
         console.log("JSON file uploaded successfully. CID:", json_data.cid);
         return json_data.cid
-    }
-        
+    }    
 }
 
 export async function getFitnessData(cid) {
@@ -42,8 +100,12 @@ export async function getFitnessData(cid) {
     return json_data
 }
 
-export async function downloadFitnessData(cid, username) {
+export async function downloadFitnessData(cid, username, decrypt=false, mnemonic_phrase=null) {
     let jsonData = await getFitnessData(cid);
+
+    if (decrypt) {
+        jsonData = decryptFitnessData(jsonData, mnemonic_phrase);
+    }
 
     const blob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' });
     
@@ -59,3 +121,4 @@ export async function downloadFitnessData(cid, username) {
     // Clean up
     window.URL.revokeObjectURL(link.href);
 }
+

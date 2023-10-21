@@ -1,11 +1,11 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
 import { notification, notificationOff, format_to_wei, delay, showModal, hideModal } from "./utils";
-import { logout, isLoggedIn, generate_mnemonic, get_username } from "./user";
+import { logout, isLoggedIn,  get_username } from "./user";
 import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails } from "./contract";
-import { sendFitnessData, getFitnessData, downloadFitnessData } from "./storage"
-
+import { sendFitnessData, getFitnessData, downloadFitnessData, saveNewFitnessData} from "./storage"
+import { generate_mnemonic, deriveKeyFromMnemonic, encrypt, decrypt } from "./encrypt"
 
 console.log(generate_mnemonic())
 const login = async (username) => {
@@ -242,6 +242,7 @@ const challenge_completion_buttons = document.querySelectorAll(".challenge-compl
 challenge_completion_buttons.forEach((button) => {
     button.addEventListener('click', async () => {
         
+       
         let username = get_username()
         let challengetype = button.getAttribute('data-challenge-type')
         let last_submitted = getlastChallengeDate(challengetype)
@@ -257,18 +258,9 @@ challenge_completion_buttons.forEach((button) => {
         }
         else {
 
-            let scopes = getScopes()
-            let { url, code_verifier, state } = await generate_auth_url(scopes);
-            console.log("fitbit button clicked")
-            console.log(url, "auth url")
-            console.log("why twice")
-            await notification("⌛ Loading Fitbit authorization page...");
+            renderSubmitChallengeModal(username, challengetype, last_submitted)
 
-            setTimeout(function () {
-                window.location.href = url;
-            }, 1100);
-
-            storeFitbitCredentials(state, code_verifier, null, challengetype)
+           
         }
     
     })
@@ -317,6 +309,21 @@ function getFitbitCredentials() {
 
 function getScopes() {  
     return SCOPES
+}
+
+async function onFitbitOAUTHRedirect(username, store_data=false, mnemonic="", cid=null) {
+    
+    
+
+    let auth = await getAuthToken()
+    let challenge_type = getFitbitCredentials().challenge_type
+    console.log(auth, "auth")
+    auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcndlaSBybnV0IHJwcm8gcnNsZSIsImV4cCI6MTY5Nzg3MjAyMSwiaWF0IjoxNjk3ODQzMjIxfQ.9PQk4mg2F1-O_n8jHQwa4xNWCdMT-hFfyGdqQcxmgiA"
+    let fitness_data = sendTriggerToServerToStoreChallengesData(state, auth, challenge_type)
+    if (store_data) {
+        saveNewFitnessData(fitness_data, mnemonic, username, cid)
+    }
+
 }
 
 async function sendTriggerToServerToStoreChallengesData(state, access_token, challenge_type) {
@@ -370,7 +377,8 @@ async function sendTriggerToServerToStoreChallengesData(state, access_token, cha
         },
         body: JSON.stringify(data),
     })
-    const response_json = await response.json();
+    const response_json = await response.json()["fitness_data"];
+
     console.log(response_json)
 }
 
@@ -421,6 +429,40 @@ function renderProfileModal() {
     listen_for_close_modal()
 }
 
+function renderSubmitChallengeModal() {
+    showModal('submitChallengeModal');
+
+        // Reference to elements
+    const saveDataCheckbox = document.getElementById("saveData");
+    const passphraseBox = document.getElementById("passphraseBox");
+    
+    // // Event listener for checkbox
+    saveDataCheckbox.addEventListener("change", function() {
+        if (this.checked) {
+        passphraseBox.classList.remove("hidden");
+        } else {
+        passphraseBox.classList.add("hidden");
+        }
+    });
+
+    
+    const submitChallengeConfirmBtn = document.getElementById('submitChallengeConfirmBtn');
+    submitChallengeConfirmBtn.addEventListener('click', async () => {
+        let scopes = getScopes()
+        let { url, code_verifier, state } = await generate_auth_url(scopes);
+        console.log("fitbit button clicked")
+        console.log(url, "auth url")
+        await notification("⌛ Loading Fitbit authorization page...");
+
+        setTimeout(function () {
+            window.location.href = url;
+        }, 1100);
+
+        storeFitbitCredentials(state, code_verifier, null, challengetype)
+    })
+    
+    listen_for_close_modal()
+}
 
 function renderUserModal(option) {
     if (option === "login") {
@@ -590,17 +632,15 @@ window.addEventListener("load", async () => {
     let users = await getUsers(provider)
     console.log(users, "users")
 
-    let details = await getUserDetails(provider, users[0])
+
+    let username = get_username()
+    let details = await getUserDetails(provider, username)
     console.log(details, "details")
 
-    let cid = await sendFitnessData({ one: 1, two: 2, three: 3, four: 4 }, "tom")
-    console.log("fitness data sent")
+    let cid = details.storage_cid
+    console.log(cid, "cid")
 
-    downloadFitnessData()
-
-    let json_data = await getFitnessData(cid)
-    console.log(json_data, "json_data recieved")
-
+    // downloadFitnessData(cid, "tom")
 
     console.log(window.location.href, "window location")
     const url = new URL(window.location.href);
@@ -611,22 +651,18 @@ window.addEventListener("load", async () => {
         const state = params.get('state');
         console.log(code, state)
 
-        let auth = await getAuthToken()
-        let challenge_type = getFitbitCredentials().challenge_type
-        console.log(auth, "auth")
-        auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcndlaSBybnV0IHJwcm8gcnNsZSIsImV4cCI6MTY5Nzg3MjAyMSwiaWF0IjoxNjk3ODQzMjIxfQ.9PQk4mg2F1-O_n8jHQwa4xNWCdMT-hFfyGdqQcxmgiA"
-        sendTriggerToServerToStoreChallengesData(state, auth, challenge_type)
-        
+        onFitbitOAUTHRedirect(username, store_data=false, mnemonic="", cid=null)
+
     }
  
     await notification("Yeahh")
 
-    let logged_in = await isLoggedIn(true)
+    let logged_in = await isLoggedIn(false)
     renderNavBar(logged_in)
     console.log(logged_in, "logged in") 
     if (!logged_in) {
         console.log("not logged in")
-        toggleBanner()
+        // toggleBanner()
     }
     else {
         toggleBanner()
