@@ -1,4 +1,8 @@
 
+// Todos left for this
+
+Integrating scroll beauty to the modals
+
 
 Profile modal should display
 

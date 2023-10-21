@@ -4,7 +4,7 @@ import { logout, isLoggedIn, generate_mnemonic, get_username } from "./user";
 import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails } from "./contract";
-import { sendFitnessData, getFitnessData } from "./storage"
+import { sendFitnessData, getFitnessData, downloadFitnessData } from "./storage"
 
 
 console.log(generate_mnemonic())
@@ -595,6 +595,8 @@ window.addEventListener("load", async () => {
 
     let cid = await sendFitnessData({ one: 1, two: 2, three: 3, four: 4 }, "tom")
     console.log("fitness data sent")
+
+    downloadFitnessData()
 
     let json_data = await getFitnessData(cid)
     console.log(json_data, "json_data recieved")
