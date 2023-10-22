@@ -36,6 +36,7 @@ By default no fitness user data is stored by the app apart from the boolean fact
 
 ### Challenge Verification
 In order to securely get fitbit data using OAUTH as well as verify challenge data we needed to introduce a lightweight web server (created with flask) to the mix. The server is responsible for fetching the fitness data as well verifying challenges to the smart contract. The smart contract only allows verified parties to submit challenge completion data on behalf of users. Rigth now the only verified party is the server.
+https://github.com/Thompsonmina/vigourHall-server (The flask server can be found here)
 
 
 
@@ -54,11 +55,17 @@ Allow users to opt in to store more fitness data not neccessarily related to the
 ### Sponsors
 - Scroll
 
-The vigour token address 0x4058039b994C1e5A4F0eEaB35F8AF1519FB224Bd
 - Filecoin
 
 
 Scroll
+Depth of integration
+The full contract/dapp and functionality is deployed/running on the scroll network. Honestly was amazed by the amount of infrastructure and documentation available for use especially for a relatively new l2. The theme of the appication was also in part inspired by scroll. I hpe to be able to continue to develop and contribute to the ecosystem. The dapp and erc20 smart contracts are deployed here at https://sepolia-blockscout.scroll.io/address/0x4058039b994C1e5A4F0eEaB35F8AF1519FB224Bd and https://sepolia-blockscout.scroll.io/address/0x47EB3BdCCc42367732c299d866C951B91B7599e7
+
+Filecoin
+Depth of integration
+I utilised filecoin and ipfs for storage of the fitness data. By utilising web3storage, I was able to implement encrypted storage of each users private fitness data. you can find the places where the technology was utilized in websrc/storage.js, and main.js. We also used it on the backend server as well. The flask server was responsible for calling thesave endpoint so as not to expose secrets on the client. You can find it in the app.py file https://github.com/Thompsonmina/vigourHall-server
+
 
 
 
