@@ -4,61 +4,110 @@
 
 /* src/assets/css/global.css */
 
+body {
+  font-family: "Merienda", cursive;
+}
+
+.top-rod {
+  top: -15px; /* Increased from -10px to -20px */
+}
+
+.bottom-rod {
+  bottom: -15px; /* Increased from -10px to -20px */
+}
+
+.alert-container {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.alert-body {
+  background-color: #faf3e0;
+  border: 2px solid #3e2723;
+  position: relative;
+  text-align: center;
+  color: #3e2723;
+}
+
+.alert-icon {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+/* SCROLL MODAL STYLING */
+
 .scroll-container {
-    background-color: #FAF3E0; 
-     /* Beige */
-    border: 2px solid #3E2723;  
-    /* Dark Brown */
-    transform: perspective(800px) rotateX(5deg);
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  .scroll-container:hover {
-    transform: perspective(800px) rotateX(0deg);
-  }
-  
-  .scroll-rod {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 30px;  /* Increased from 20px to 40px */
-    background: linear-gradient(to bottom, #8B4513, #D2B48C);  /* Saddle Brown to Tan */
-    border-radius: 50%;
-    z-index: -1;
-  }
-  
-  .top-rod {
-    top: -15px;  /* Increased from -10px to -20px */
-  }
-  
-  .bottom-rod {
-    bottom: -15px;  /* Increased from -10px to -20px */
-  }
-  
-  .alert-container {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-  }
-  
-  .alert-body {
-    background-color: #FAF3E0; 
-    border: 2px solid #3E2723; 
-    position: relative;
-    text-align: center;
-    color: #3E2723;
-  }
-  
-  .alert-icon {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 50%);
-  }
-  
-  
-  
-  
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: none;
+  border: none;
+}
+
+.scroll-bar {
+  position: relative;
+  width: 50vw;
+  min-width: 310px;
+  max-width: 600px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+}
+
+.scroll-bar--rect-long,
+.scroll-bar--rect-short {
+  border: 2px solid black;
+  background: white;
+  border-radius: 4px;
+}
+
+.scroll-bar--rect-short {
+  position: relative;
+  width: 95%;
+  height: 100%;
+  background: linear-gradient(to bottom, #ffeecc, #996633) !important;
+}
+
+.scroll-bar--rect-long {
+  position: absolute;
+  width: 100%;
+  height: 85%;
+  z-index: -1;
+  top: 50%;
+  transform: translate(0%, -50%);
+  background: linear-gradient(to bottom, #e4c38c, #ae7c44);
+}
+
+.scroll-content {
+  position: relative;
+  width: 92%;
+  border: solid black;
+  border-width: 0 1.5px 0 1.5px;
+  padding: 16px;
+  line-height: 24px;
+  background-color: #dbc3a1;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 20px;
+  font-size: 32px;
+  padding: 8px;
+}
+
+.scroll-container--profile-modal .scroll-bar {
+  position: relative;
+  width: 50vw;
+  min-width: 510px;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+}

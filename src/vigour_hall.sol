@@ -3,9 +3,23 @@
 pragma solidity ^0.8.19;
 
 
+interface IERC20 {
+    // Functions
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+
+    // Events
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
 contract VigourHall {
     address public owner;
-    string serverPublicKey;
+    IERC20 public vigourToken;
 
     address[] public verifiedParties;
 
@@ -38,17 +52,56 @@ contract VigourHall {
         ChallengeType challengeType;
     }
 
+    uint tier1PaymentAmount = 1000000000000000000;
+    uint tier2PaymentAmount = 2500000000000000000;
+    uint tier3PaymentAmount = 10000000000000000000;
+
+    uint tier1NumberOfCompletionsForPayment = 5;
+    uint tier2NumberOfCompletionsForPayment = 4;
+    uint tier3NumberOfCompletionsForPayment = 3;
+
+    struct ChallengeBalances{
+        uint tier1paymentCompletions;
+        uint tier2paymentCompletions;
+        uint tier3paymentCompletions;
+        uint tier1unpayedCompletionsBundles;
+        uint tier2unpayedCompletionsBundles;
+        uint tier3unpayedCompletionsBundles;
+        uint totalPayedOut;
+    }
 
     // unique username per user
     mapping(string => User) public users;
     mapping(string => Challenge[] ) public challenges;
+    mapping(string => ChallengeBalances) public challengeBalances;
 
     string[] public usernames;
     uint public totalusers;
 
-    constructor() {
+    constructor(address _vigourTokenAddress) {
         owner = msg.sender;
         verifiedParties.push(msg.sender);
+        vigourToken = IERC20(_vigourTokenAddress);
+    }
+    
+    function claimPayments(string memory username) public isUser(username) {
+
+        uint tier1total = challengeBalances[username].tier1unpayedCompletionsBundles * tier1PaymentAmount;
+        uint tier2total = challengeBalances[username].tier2unpayedCompletionsBundles * tier2PaymentAmount;
+        uint tier3total = challengeBalances[username].tier3unpayedCompletionsBundles * tier3PaymentAmount;
+
+        uint totalPayable = tier1total + tier2total + tier3total;
+        require(vigourToken.balanceOf(address(this)) >= totalPayable, "Not enough funds in contract to pay out, request again later");
+
+
+        vigourToken.transfer(users[username].user_address, totalPayable);
+        challengeBalances[username].tier1unpayedCompletionsBundles = 0;
+        challengeBalances[username].tier2unpayedCompletionsBundles = 0;
+        challengeBalances[username].tier3unpayedCompletionsBundles = 0;
+
+        payable(msg.sender).transfer(totalPayable);
+        challengeBalances[username].totalPayedOut += totalPayable;
+
     }
 
     function compareStrings(string memory a, string memory b) private pure returns (bool) {
@@ -231,6 +284,28 @@ contract VigourHall {
 
         return (tier1CompletionUnits, tier2CompletionUnits, tier3CompletionUnits);
     }
+    
+     function updateChallengeBalances(string memory username, uint completions, uint tier) private{
+        uint unpayedCompletionsBundles;
+        if (tier == 1){
+            challengeBalances[username].tier1paymentCompletions += completions;
+            unpayedCompletionsBundles = challengeBalances[username].tier1paymentCompletions / tier1NumberOfCompletionsForPayment;
+            challengeBalances[username].tier1paymentCompletions = challengeBalances[username].tier1paymentCompletions % tier1NumberOfCompletionsForPayment;
+        }
+        else if (tier == 2){
+           challengeBalances[username].tier2paymentCompletions += completions;
+            unpayedCompletionsBundles = challengeBalances[username].tier2paymentCompletions / tier2NumberOfCompletionsForPayment;
+            challengeBalances[username].tier2paymentCompletions = challengeBalances[username].tier2paymentCompletions % tier2NumberOfCompletionsForPayment;
+
+        }
+        else if (tier == 3){
+           challengeBalances[username].tier3paymentCompletions += completions;
+            unpayedCompletionsBundles = challengeBalances[username].tier3paymentCompletions / tier3NumberOfCompletionsForPayment;
+            challengeBalances[username].tier3paymentCompletions = challengeBalances[username].tier3paymentCompletions % tier3NumberOfCompletionsForPayment;
+
+        }
+    }
+
 
 // Because the way the contract is designed the challenge completions do not neccessarly have to be submitted every day
 // as long as the trusted party calling the contract is able to verify the streaks and completions on thier end and send the appropriate state to the contract
@@ -246,12 +321,19 @@ contract VigourHall {
                 // increment the total completions for the challenge tier the user is a part of
                 if (challenges[username][i].tier1){
                     challenges[username][i].totalTier1Completions += uint64(newCompletionsnum);
+                    updateChallengeBalances(username, newCompletionsnum, 1);
+
                 }
                 else if (challenges[username][i].tier2){
+
                     challenges[username][i].totalTier2Completions += uint64(newCompletionsnum);
+                    updateChallengeBalances(username, newCompletionsnum, 2);
+
                 }
                 else if (challenges[username][i].tier3){
                     challenges[username][i].totalTier3Completions += uint64(newCompletionsnum);
+                    updateChallengeBalances(username, newCompletionsnum, 3);
+
                 }
 
                 if (continueStreak){

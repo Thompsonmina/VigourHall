@@ -104,3 +104,23 @@ export async function getUserDetails(provider, username) {
     return userDetails;
 }
 
+export async function claimPayment(signer, username) {
+    const contract = new ethers.Contract(vigour_hall_address, vigour_hall_abi, signer);
+
+    // Call the claimPayment function
+    const tx = await contract.claimPayment(username);
+    // Wait for the transaction to be mined
+    const receipt = await tx.wait();
+
+    return receipt;
+}
+
+export async function getChallengeBalances(provider, username) {
+    const contract = new ethers.Contract(vigour_hall_address, vigour_hall_abi, provider);
+
+    let balances = await contract.ChallengeBalances(username);
+    console.log(balances)
+
+    balances = { tier1_unpayed: Number(balances[3]), tier2_unpayed: Number(balances[4]), tier3_unpayed: Number(balances[5]), total_payed_out: Number(balances[6]) }
+    return balances;
+}
