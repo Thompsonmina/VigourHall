@@ -1,7 +1,7 @@
 import vigourhall_artefacts from '../out/vigour_hall.sol/VigourHall.json'
 import { ethers } from "ethers";
 
-export const vigour_hall_address = "0xe714249A51Bc10b93cf7B893DD949f935823B370";
+export const vigour_hall_address = "0xE674Ba3DDa26C85F0782A9c12c632AEa9902FE9A";
 export const vigour_hall_abi = vigourhall_artefacts.abi;
 
 
@@ -22,6 +22,18 @@ export async function enrollInChallenge(signer, username, challengeType) {
 
     // Call the enrollInChallenge function
     const tx = await contract.enrollInChallenge(username, challengeType);
+    // Wait for the transaction to be mined
+    const receipt = await tx.wait();
+
+    return receipt;
+}
+
+export async function createNewUser(signer, username, secure_hash) {
+    console.log("is in create")
+    const contract = new ethers.Contract(vigour_hall_address, vigour_hall_abi, signer);
+
+    // Call the createNewUser function
+    const tx = await contract.registerUser(username, secure_hash);
     // Wait for the transaction to be mined
     const receipt = await tx.wait();
 

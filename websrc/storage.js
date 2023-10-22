@@ -59,7 +59,7 @@ export async function saveNewFitnessData(new_data, mnemonic_phrase, username, ci
     let encrypted_new_data = encryptFitnessData(new_data, mnemonic_phrase);
     console.log(encrypted_new_data, "encrypted_new_data")
 
-    if (cid == null) {
+    if (cid == null || cid == "") {
         cid = await sendFitnessData(encrypted_new_data);
         return cid
     }

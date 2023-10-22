@@ -4,9 +4,20 @@ const CryptoJS = require('crypto-js');
 
 const { HDNodeWallet } = require('ethers') 
 
+
+const stringToBytes = (str) => {
+    const encoder = new TextEncoder();  // TextEncoder is available in most modern browsers
+    return encoder.encode(str);
+}
+  
 export function generate_mnemonic() {
     const mnemonic = ethers.Wallet.createRandom().mnemonic;
     return mnemonic.phrase;
+}
+
+export function generateUserSecureHash(mnemonic_phrase){
+    const user_secure_hash = ethers.keccak256(stringToBytes(ethers.keccak256(stringToBytes(mnemonic_phrase))));
+    return user_secure_hash;
 }
 
 export function deriveKeyFromMnemonic(mnemonic) {

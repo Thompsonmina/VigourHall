@@ -13,7 +13,7 @@ const auth_modal = (option) => {
         <form>
         <div class="mb-4">
         <label for="username" class="block text-[#8B4513] mb-2">Username</label>
-        <input type="text" id="username-input" name="username" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        <input type="text" id="username-input" name="username" class="w-full max-w-lg p-2 rounded border text-black border-[#8B4513]">
         </div>
         
         <button id="login-submit-btn"  class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
@@ -35,7 +35,7 @@ const auth_modal = (option) => {
         <form>
         <div class="mb-4">
         <label for="username" class="block text-[#8B4513] mb-2">Username</label>
-        <input type="text" id="username-input" name="username-input" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        <input type="text" id="username-input"  class="w-full max-w-lg p-2 rounded border text-black border-[#8B4513]">
         </div>
         <button id="generateBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Generate Phrase
@@ -45,14 +45,14 @@ const auth_modal = (option) => {
     <div id="phraseContainer" class="hidden mt-5">
         <p id="phrase" class="mb-4"></p>
         <button id="copyBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Copy/Download Phrase
+            Copy Phrase
         </button>
     </div>
 
     <!-- Textarea & Submit Phrase Button -->
         <div id="submitContainer" class="hidden mt-5">
-            <label for="phrase" class="block text-[#8B4513] mb-2">PassPhrase</label>
-            <textarea id="phraseInput" class="w-full p-3 border rounded"></textarea>
+            <label for="phrase" class="block text-[#8B4513] mb-2">Mnemonic Phrase</label>
+            <textarea id="phraseInput" class="w-full p-3 border rounded text-black"></textarea>
             <button id="sign-up-btn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">
                 Create Account
             </button>

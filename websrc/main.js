@@ -1,21 +1,17 @@
 // import timely_tasks_artefacts from '../out/tasks.sol/Tasks.json'
-import { notification, notificationOff, format_to_wei, delay, showModal, hideModal } from "./utils";
-import { logout, isLoggedIn,  get_username } from "./user";
+import {
+    notification, notificationOff, format_to_wei, delay, showModal, hideModal,
+storeFitbitCredentials, getFitbitCredentials} from "./utils";
+import { logout, isLoggedIn,  get_username, login, signup } from "./user";
 import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
-import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails } from "./contract";
+import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails, createNewUser } from "./contract";
 import { sendFitnessData, getFitnessData, downloadFitnessData, saveNewFitnessData} from "./storage"
-import { generate_mnemonic, deriveKeyFromMnemonic, encrypt, decrypt } from "./encrypt"
+import { generate_mnemonic, deriveKeyFromMnemonic, generateUserSecureHash, encrypt, decrypt } from "./encrypt"
 
 console.log(generate_mnemonic())
-const login = async (username) => {
-    console.log(username, "login")
-}
 
-const signup = async (username) => {
-    console.log(username, "signup")
 
-}
 
 const reassociate_user = async (username, new_address) => {
     console.log(username, new_address, "reassociate_user")
@@ -44,7 +40,8 @@ const challengeMapping = {water: 1, sleep: 2, bodyfat: 3, steps: 4, activity: 5}
 
 async function isAccountConnected() {
     const accounts = await ethereum.request({ method: 'eth_accounts' });
-    console.log(accounts, "accounts")
+    console.log(accounts, "accounts why no show?")
+    current_address = accounts[0];
     if (accounts.length !== 0) {
         return true;
     }
@@ -70,7 +67,8 @@ const connectMetaMaskWallet = async function () {
             try {
                 let accounts = await ethereum.request({ method: 'eth_requestAccounts', params: [] });
                 current_address = accounts[0];
-                console.log(current_address);
+                console.log(current_address, accounts[0], "accounts") ;
+                notification(current_address)
             }
             catch (error) {
                 console.error(error);
@@ -151,6 +149,11 @@ document.getElementById('navbar').addEventListener('click', function(event) {
         if (userAction === "reassociate") {
             console.log("reassociate")
             renderUserModal("reassociate");
+        }
+
+        if (userAction === "logout") {
+            console.log("logout")
+            logout();
         }
     }
 });
@@ -286,7 +289,7 @@ enroll_buttons.forEach((button) => {
             }
             else {
 
-                enrollInChallenge(signer, username, challengetype)
+                await enrollInChallenge(signer, username, challengetype)
                 await notification("You have been enrolled in this challenge.")
             }
         }
@@ -296,27 +299,19 @@ enroll_buttons.forEach((button) => {
     })
 })
 
-function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, challenge_type = "") {
-    const storeddata = { state, code_verifier, access_token, challenge_type};
-    localStorage.setItem("fitbit_info", JSON.stringify(storeddata));
-}
-
-function getFitbitCredentials() { 
-    const storeddata = localStorage.getItem("fitbit_info");
-    console.log(storeddata, "stored data")
-    return JSON.parse(storeddata);
-}
-
 function getScopes() {  
     return SCOPES
 }
 
-async function onFitbitOAUTHRedirect(username, store_data=false, mnemonic="", cid=null) {
+async function onFitbitOAUTHRedirect(username, cid=null) {
     
     
 
     let auth = await getAuthToken()
+    let state = getFitbitCredentials().state
     let challenge_type = getFitbitCredentials().challenge_type
+    let store_data = getFitbitCredentials().store_data
+    let mnemonic = getFitbitCredentials().mnemonic
     console.log(auth, "auth")
     auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcndlaSBybnV0IHJwcm8gcnNsZSIsImV4cCI6MTY5Nzg3MjAyMSwiaWF0IjoxNjk3ODQzMjIxfQ.9PQk4mg2F1-O_n8jHQwa4xNWCdMT-hFfyGdqQcxmgiA"
     let fitness_data = sendTriggerToServerToStoreChallengesData(state, auth, challenge_type)
@@ -429,7 +424,7 @@ function renderProfileModal() {
     listen_for_close_modal()
 }
 
-function renderSubmitChallengeModal() {
+function renderSubmitChallengeModal(username, challengetype, last_submitted) {
     showModal('submitChallengeModal');
 
         // Reference to elements
@@ -437,7 +432,8 @@ function renderSubmitChallengeModal() {
     const passphraseBox = document.getElementById("passphraseBox");
     
     // // Event listener for checkbox
-    saveDataCheckbox.addEventListener("change", function() {
+    saveDataCheckbox.addEventListener("change", function (event) {
+        event.preventDefault();
         if (this.checked) {
         passphraseBox.classList.remove("hidden");
         } else {
@@ -445,9 +441,14 @@ function renderSubmitChallengeModal() {
         }
     });
 
+    let mnemonic_phrase = document.getElementById('passphrase-submit').value
+
+
     
     const submitChallengeConfirmBtn = document.getElementById('submitChallengeConfirmBtn');
-    submitChallengeConfirmBtn.addEventListener('click', async () => {
+    submitChallengeConfirmBtn.addEventListener('click', async (event) => {
+        console.log("come on")
+        event.preventDefault();
         let scopes = getScopes()
         let { url, code_verifier, state } = await generate_auth_url(scopes);
         console.log("fitbit button clicked")
@@ -458,7 +459,9 @@ function renderSubmitChallengeModal() {
             window.location.href = url;
         }, 1100);
 
-        storeFitbitCredentials(state, code_verifier, null, challengetype)
+        console.log(saveDataCheckbox.checked, "saveDataCheckbox.checked")
+
+        storeFitbitCredentials(state, code_verifier, null, challengetype, saveDataCheckbox.checked, mnemonic_phrase);
     })
     
     listen_for_close_modal()
@@ -477,7 +480,7 @@ function renderUserModal(option) {
         document.getElementById('login-submit-btn').addEventListener('click', async (event) => {
             event.preventDefault();
             let username = document.getElementById('username-input').value;
-            await login(username)
+            await login(provider, username, current_address)
             hideModal('userModal')
         })
 
@@ -486,10 +489,11 @@ function renderUserModal(option) {
     if (option === "signup") {
         const phrase = generate_mnemonic();
 
-        const generatePhrase = () => {
+        const generatePhrase = (event) => {
             // Generate a mock phrase. You can replace this with actual logic.
         
             // Hide the generate button
+            event.preventDefault();
             document.getElementById('generateBtn').classList.add('hidden');
         
             // Display the phrase and copy/download button
@@ -499,7 +503,7 @@ function renderUserModal(option) {
             notification("Please copy your phrase and store it somewhere safe. You will need it to recover/reassociate your account.")
         }
 
-        const copyPhrase = () =>  {
+        const copyPhrase = (event) =>  {
             // Get the generated phrase text
             const phraseText = document.getElementById('phrase').textContent;
         
@@ -508,6 +512,7 @@ function renderUserModal(option) {
             // Hide the phrase and copy/download button
             document.getElementById('phraseContainer').classList.add('hidden');          
             navigator.clipboard.writeText(phrase);
+            notification("Make sure to store your passphrase somewhere safe. You will need it to recover/reassociate your account and store your submissions.", false)
         }
 
         
@@ -519,8 +524,8 @@ function renderUserModal(option) {
             renderUserModal("login");
         })
 
-        document.getElementById('generateBtn').addEventListener('click', generatePhrase);
-        document.getElementById('copyBtn').addEventListener('click', copyPhrase);
+        document.getElementById('generateBtn').addEventListener('click', async (event) => generatePhrase(event));
+        document.getElementById('copyBtn').addEventListener('click', async (event) => copyPhrase(event));
 
         document.getElementById('sign-up-btn').addEventListener('click', async (event) => {
             event.preventDefault();
@@ -531,7 +536,8 @@ function renderUserModal(option) {
                 console.log("phrase is not correct")
             }
             else {
-                await signup(username)
+                await signup(provider, signer, username)
+                notificationOff()
                 hideModal('userModal')
             }
         })
@@ -630,6 +636,7 @@ window.addEventListener("load", async () => {
 
 
     let users = await getUsers(provider)
+    console.log(current_address, "current address")
     console.log(users, "users")
 
 
@@ -651,7 +658,7 @@ window.addEventListener("load", async () => {
         const state = params.get('state');
         console.log(code, state)
 
-        onFitbitOAUTHRedirect(username, store_data=false, mnemonic="", cid=null)
+        onFitbitOAUTHRedirect(username, cid=cid)
 
     }
  
