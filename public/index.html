@@ -8,9 +8,9 @@
 
   <!-- <link href="./styles.css" rel="stylesheet"> -->
 </head>
-<body class="bg-[#2E2E2E] text-white">
+<body class="bg-[#edd5b3]">
   <!-- Navigation Bar -->
-<nav class="bg-[#8B4513] p-4" id="navbar">
+  <nav class="p-4" id="navbar">
     <div class="container mx-auto">
       <div class="flex items-center justify-between">
         <a href="/" class="flex items-center">
@@ -75,8 +75,8 @@
         <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2 challenge-completion-btn">Submit Proof</button>
         
         <div class="px-6 pt-4 pb-2">
-            <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
-            <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+            <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden enroll-span">Enrolled</span>
+            <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden tier-span"> Tier 1</span>
           </div>
     
     </div>
@@ -105,8 +105,8 @@
           <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2 challenge-completion-btn" data-challenge-type="water">Submit Proof</button>
           
           <div class="px-6 pt-4 pb-2">
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+              <span class="hidden inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
+              <span class="hidden inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden tier-span"> Tier 1</span>
             </div>
       
       </div>
@@ -135,8 +135,8 @@
           <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2 challenge-completion-btn" data-challenge-type="bodyfat">Submit Proof</button>
           
           <div class="px-6 pt-4 pb-2">
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden enroll-span">Enrolled</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden tier-span"> Tier 1</span>
             </div>
       
       </div>
@@ -165,8 +165,8 @@
           <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2 challenge-completion-btn"  data-challenge-type="steps">Submit Proof</button>
           
           <div class="px-6 pt-4 pb-2">
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden enroll-span">Enrolled</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden tier-span"> Tier 1</span>
             </div>
       
       </div>
@@ -195,8 +195,8 @@
           <button class="bg-[#FFD700] text-[#8B4513] px-2 py-1 rounded mt-2 challenge-completion-btn" data-challenge-type="activity">Submit Proof</button>
           
           <div class="px-6 pt-4 pb-2">
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Enrolled</span>
-              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"> Tier 1</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden enroll-span">Enrolled</span>
+              <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hidden tier-span"> Tier 1</span>
             </div>
       
       </div>
@@ -209,44 +209,92 @@
 
       <!-- Modal Content -->
 
-<!-- Profile Modal Container -->
-<div class="absolute hidden flex justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0" id="profileModal">
-<!-- Profile Modal Content -->
-<div class="bg-black opacity-50 h-full w-full" ></div>
-<div class="bg-[#D2B48C] rounded-lg w-1/2 p-8 absolute">
-    <h2 class="text-2xl font-semibold mb-4 border-b-2 border-[#8B4513] pb-2">Your Guild Profile</h2>
-    
-    <!-- Close button -->
-    <button class="absolute top-4 right-4 text-[#8B4513] text-2xl focus:outline-none modal-close-btn">×</button>
+  <!-- Profile Modal Container -->
+  <div
+  class="absolute flex hidden justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0"
+  id="profileModal"
+>
+  <div class="bg-black opacity-50 h-full w-full absolute"></div>
 
-    <div class="mt-4">
-    <h3 class="text-lg font-semibold text-[#8B4513] mb-2">Account Details</h3>
-    <div class="grid grid-cols-2 gap-4">
-        <div>
-        <label for="email" class="block text-[#8B4513] mb-1">Email</label>
-        <input type="email" id="email" name="email" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+  <div class="scroll-container scroll-container--profile-modal">
+    <div class="scroll-bar">
+      <div class="scroll-bar--rect-short"></div>
+      <div class="scroll-bar--rect-long"></div>
+    </div>
+
+    <div class="scroll-content">
+      <h2
+        class="text-2xl font-semibold mb-4 border-b-2 border-[#8B4513] text-[#8B4513] pb-2"
+      >
+        Your Profile
+      </h2>
+
+      <!-- Close button -->
+      <button
+        class="absolute top-4 right-4 text-[#8B4513] text-2xl focus:outline-none modal-close-btn"
+      >
+        ×
+      </button>
+
+      <div class="mt-4">
+        <h3 class="text-lg font-semibold text-[#8B4513] mb-2">
+          Account Details
+        </h3>
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <label for="username" class="block text-[#8B4513] mb-1"
+              >Username</label
+            >
+            <input
+              type="username"
+              id="username"
+              name="username"
+              class="w-full max-w-lg p-2 bg-transparent border-0 border-b-2 border-[#8B4513]"
+            />
+          </div>
+          <div>
+            <label for="associatedAddress" class="block text-[#8B4513] mb-1"
+              >Associated address</label
+            >
+            <input
+              type="text"
+              id="associatedAddress"
+              name="associatedAddress"
+              class="w-full max-w-lg p-2 bg-transparent border-b-2 border-[#8B4513]"
+            />
+          </div>
         </div>
-        <div>
-        <label for="phoneNumber" class="block text-[#8B4513] mb-1">Phone Number</label>
-        <input type="text" id="phoneNumber" name="phoneNumber" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
-        </div>
-    </div>
-    </div>
+      </div>
 
-    <div class="mt-4">
-    <h3 class="text-lg font-semibold text-[#8B4513] mb-2">Statistics</h3>
-    <p>Coins Earned: <span class="font-bold">500</span></p>
-    <p>Current Streak: <span class="font-bold">5 days</span></p>
-    </div>
+      <div class="mt-4">
+        <h3 class="text-lg font-semibold text-[#8B4513] mb-2">Settings</h3>
 
-    <div class="mt-4">
-    <button type="button" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
-        Update Profile
+        <label for="store-data" class="hidden text-[#8B4513]">
+          Store my data
+        </label>
+        <input class="hidden" id="store-data" name="store-data" type="checkbox" />
+      </div>
+
+
+      <div class="mt-8">
+        <h3 class="text-lg font-semibold text-[#8B4513] mb-2">Actions</h3>
+
+        <button
+          type="button"
+          class="bg-[#b57445] hover:bg-[#a56537] text-white px-4 py-2 rounded duration-300 font-medium"
+        >
+          Download data
         </button>
       </div>
     </div>
+
+    <div class="scroll-bar">
+      <div class="scroll-bar--rect-short"></div>
+      <div class="scroll-bar--rect-long"></div>
+    </div>
   </div>
-        
+</div>
+
 
 <!-- user management Modal -->
 <div id="userModalHolder" >
@@ -267,41 +315,59 @@
 
 
     
-<!-- Earnings Modal -->
-    <div class="absolute hidden flex justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0" id="earningsModal">
-        
-      <div class="bg-black opacity-50 h-full w-full" ></div>
-      <div class="bg-[#D2B48C] scroll-container rounded-lg shadow-lg w-3/4 max-w-lg absolute">
-          
-          <div class="flex justify-between items-center bg-[#8B4513] text-white rounded-t-lg p-4">
-            <h2 class="text-2xl font-bold">Your Earnings</h2>
-            <button class="text-2xl font-bold modal-close-btn">&times;</button>
-          </div>
-          <div class="p-6 ">
-            <p class="text-[#8B4513] text-lg mb-4">Congratulations, here's what you've earned:</p>
-            <ul class="list-decimal list-inside text-[#8B4513]">
-              <li class="mb-2">Sleep Challenge: 50 Gold</li>
-              <li class="mb-2">Steps Challenge: 30 Gold</li>
-              <li class="mb-2">Exercise Challenge: 40 Gold</li>
-              <!-- Add more challenges here -->
-            </ul>
-            <div class="text-[#8B4513] text-xl font-bold mt-4">Total: 120 Gold</div>
-            <button class="bg-[#FFD700] text-[#8B4513] px-4 py-2 rounded mt-6">Withdraw</button>
-          </div>
-        </div>
+<div class="absolute flex hidden justify-center items-center z-10 w-screen top-0 bottom-0 left-0 right-0" id="earningsModal"
+>
+<div class="bg-black opacity-50 h-full w-full absolute"></div>
+
+<div class="scroll-container">
+  <div class="scroll-bar">
+    <div class="scroll-bar--rect-short"></div>
+    <div class="scroll-bar--rect-long"></div>
+  </div>
+
+  <div class="scroll-content px-10">
+    <h2 class="text-2xl font-semibold mb-4 text-[#8B4513]">
+      Your Earnings
+    </h2>
+    <button class="text-3xl font-bold modal-close-btn text-[#8B4513]">
+      &times;
+    </button>
+
+    <div class="py-6">
+      <p class="text-[#8B4513] text-lg mb-4">
+        Congratulations, here's what you've earned:
+      </p>
+      <ul class="list-decimal list-inside text-[#8B4513]">
+        <li class="mb-2">Tier 1 Unclaimed Earnings: <span id="tier-1-unclaimed"> </span></li>
+        <li class="mb-2">Tier 2 Unclaimed Earnings: <span id="tier-2-unclaimed"> </span> Vigour </li>
+        <li class="mb-2">Tier 3 Unclaimed Earnings: <span id="tier-3-unclaimed"> </span> Vigour</li>
+        <!-- Add more challenges here -->
+      </ul>
+      <div class="text-[#8B4513] text-md font-medium mt-8">
+        Total Unclaimed Earnings: <span id ="all-unclaimed"> </span> Vigour
+      </div>
+      <div class="text-[#8B4513] text-md font-medium mt-2">
+        Lifetime Earnings: <span id ="historical-claimed"> </span> Vigour
       </div>
 
+      <button id="withdraw-earnings"
+        type="button"
+        class="bg-[#b57445] hover:bg-[#a56537] text-white px-4 py-2 rounded duration-300 mt-6 font-medium"
+      >
+        Withdraw Unclaimed Earnings
+      </button>
+    </div>
+  </div>
+
+  <div class="scroll-bar">
+    <div class="scroll-bar--rect-short"></div>
+    <div class="scroll-bar--rect-long"></div>
+  </div>
+</div>
+</div>
+
     
-      <div id="scroll-modal" class="scroll-modal hidden fixed inset-0 flex items-center justify-center">
-        <div class="scroll-container relative bg-white rounded-lg shadow-lg p-6">
-          <div class="scroll-rod top-rod"></div>
-          <!-- Modal content here -->
-          <h2 class="text-2xl font-bold mb-4">Scroll Title</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <div class="scroll-rod bottom-rod"></div>
-        </div>
-      </div>
-      
+     
       <div class="bg-orange-100 hidden border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
         <p class="font-bold">Be Warned</p>
         <p>Something not ideal might be happening.</p>

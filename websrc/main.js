@@ -5,7 +5,7 @@ storeFitbitCredentials, getFitbitCredentials} from "./utils";
 import { logout, isLoggedIn,  get_username, login, signup, reassociate_user } from "./user";
 import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
-import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails, createNewUser } from "./contract";
+import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails, createNewUser, getChallengeBalances, claimPayment } from "./contract";
 import { sendFitnessData, getFitnessData, downloadFitnessData, saveNewFitnessData} from "./storage"
 import { generate_mnemonic, deriveKeyFromMnemonic, generateUserSecureHash, encrypt, decrypt } from "./encrypt"
 
@@ -14,8 +14,6 @@ const ethers = require("ethers")
 import { MetaMaskSDK } from '@metamask/sdk';
 
 import './styles.css';
-
-console.log("I am not crazy")
 
 const MMSDK = new MetaMaskSDK();
 console.log(MMSDK)
@@ -46,27 +44,25 @@ function toggleBanner() {
     document.getElementById('main-content').classList.toggle('hidden');
 }
 
+// handle metamask connection
 const connectMetaMaskWallet = async function () {
     if (ethereum.isMetaMask) {
 
-        if (isAccountConnected()) {
-            await notification(" Connected to Metamask...");
-            toggleBanner()
-        }
+        // if (isAccountConnected()) {
+        //     await notification(" Connected to Metamask...");
+        //     toggleBanner()
+        // }
         
-        else {
             await notification("⚠️ Please approve this DApp to use it.")
             try {
                 let accounts = await ethereum.request({ method: 'eth_requestAccounts', params: [] });
                 current_address = accounts[0];
                 console.log(current_address, accounts[0], "accounts") ;
-                notification(current_address)
             }
             catch (error) {
                 console.error(error);
             }
             console.log("approved")
-        }
 
         try {
                 
@@ -108,7 +104,7 @@ const connectMetaMaskWallet = async function () {
      window.location.reload();
  });
 
-
+// event listener for all the navbar clicks
 document.getElementById('navbar').addEventListener('click', function(event) {
     // Check if the clicked element is a nav-item
     if (event.target.matches('.pri-nav-item')) {
@@ -150,6 +146,7 @@ document.getElementById('navbar').addEventListener('click', function(event) {
     }
 });
 
+// event listener for all the modal closes
 function listen_for_close_modal() {
     const modal_close_buttons = document.querySelectorAll('.modal-close-btn ');
 
@@ -194,19 +191,7 @@ function dateIsToday(customDateStr) {
     }
 }
 
-// function generateDateString(timestamp) {
-//     const today = new Date(timestamp);
-
-//     // Extract the day, month, and year
-//     const day = today.getDate();
-//     const month = today.getMonth() + 1;  // JavaScript months are 0-based
-//     const year = today.getFullYear();
-
-//     let _date = `${day}D${month}M${year}Y`;
-//     return _date
-// }
-
-
+// generate date string from timestamp
 function generateDateStringFromTimestamp(timestamp) {
     const today = new Date(timestamp);
 
@@ -222,7 +207,7 @@ function generateDateStringFromTimestamp(timestamp) {
     return _date
 }
 
-
+// get last challenge date from the contract, bypassed for now for demo purposes
 function getlastChallengeDate(challenge_type) {
 
     // fetch from the contract hardcoded for now
@@ -232,7 +217,7 @@ function getlastChallengeDate(challenge_type) {
 
 document.getElementById('connect-metamask').addEventListener('click', connectMetaMaskWallet);
 
-
+// event listerner for challenge completion buttons
 const challenge_completion_buttons = document.querySelectorAll(".challenge-completion-btn")
 challenge_completion_buttons.forEach((button) => {
     button.addEventListener('click', async () => {
@@ -261,6 +246,7 @@ challenge_completion_buttons.forEach((button) => {
     })
 });
 
+// event listerner for enroll buttons
 const enroll_buttons = document.querySelectorAll(".enroll-btn")
 enroll_buttons.forEach((button) => {
     button.addEventListener('click', async () => {
@@ -295,9 +281,8 @@ function getScopes() {
     return SCOPES
 }
 
+// handle the redirect when fitbit sends the user back to the app
 async function onFitbitOAUTHRedirect(username, cid=null) {
-    
-    
 
     let auth = await getAuthToken()
     let state = getFitbitCredentials().state
@@ -324,6 +309,7 @@ async function onFitbitOAUTHRedirect(username, cid=null) {
 
 }
 
+// send the message to server to make it get, verify and save the challenge confirmation to the contract
 async function sendTriggerToServerToStoreChallengesData(state, access_token, challenge_type) {
     console.log("sendTriggerToServerToStoreChallengesData")
     console.log(state, access_token, challenge_type)
@@ -387,6 +373,7 @@ async function sendTriggerToServerToStoreChallengesData(state, access_token, cha
 }
 
 
+// handle metamask connection
 async function onClickConnect() {
     console.log("onClickConnect triggered.")
     // exit();
@@ -423,23 +410,46 @@ async function getAuthToken() {
     return access_token
 }
 
-function renderEarningsModal() {
+async function renderEarningsModal() {
     showModal('earningsModal');
+
+    let username = await get_username()
+    let balances = await getChallengeBalances(provider, username)
+    console.log(balances, "balances")
+    document.getElementById('tier-1-unclaimed').innerHTML = balances.tier1_unpayed
+    document.getElementById('tier-2-unclaimed').innerHTML = balances.tier1_unpayed
+    document.getElementById('tier-3-unclaimed').innerHTML = balances.tier1_unpayed
+    document.getElementById("all-unclaimed").innerHTML = balances.tier1_unpayed + balances.tier2_unpayed + balances.tier3_unpayed;
+    document.getElementById('historical-claimed').innerHTML = balances.total_payed_out
+
+    document.getElementById("withdraw-earnings").addEventListener("click", async () => {
+        await claimPayment(signer, username)
+        notification("Payment Claimed!")
+    })
+
     listen_for_close_modal()
 }
 
 function renderProfileModal() {
+    // placeholder here at the moment. It should allow a user to download thier fitness data
     showModal('profileModal');
+    
+    document.querySelector("#profileModal > div.scroll-container.scroll-container--profile-modal > div.scroll-content > div.mt-8 > button").addEventListener('click', async () => {
+        downloadFitnessData("bafkreibwvoyhpgja2cszgdhq2uf575lztf6rcponia3pzodmhowizygaem", "tom")
+    })
+
+
     listen_for_close_modal()
 }
 
+// confirmation for render submit,
+// if yes generates a redirect url and redirects to fitbit and then stores relevant information
 function renderSubmitChallengeModal(username, challengetype, last_submitted) {
     showModal('submitChallengeModal');
 
         // Reference to elements
     const saveDataCheckbox = document.getElementById("saveData");
     const passphraseBox = document.getElementById("passphraseBox");
-    
 
     // // Event listener for checkbox
     saveDataCheckbox.addEventListener("change", function (event) {
@@ -473,17 +483,17 @@ function renderSubmitChallengeModal(username, challengetype, last_submitted) {
             }
             else {
                 console.log("passphrase provided")
-                // let { url, code_verifier, state } = await generate_auth_url(scopes);
-                // console.log("fitbit button clicked")
-                // console.log(url, "auth url")
-                // await notification("⌛ Loading Fitbit authorization page...");
+                let { url, code_verifier, state } = await generate_auth_url(scopes);
+                console.log("fitbit button clicked")
+                console.log(url, "auth url")
+                await notification("⌛ Loading Fitbit authorization page...");
 
-                // setTimeout(function () {
-                //     window.location.href = url;
-                // }, 1100);
+                setTimeout(function () {
+                    window.location.href = url;
+                }, 1100);
 
-                // console.log(saveDataCheckbox.checked, "saveDataCheckbox.checked")
-                // storeFitbitCredentials(state, code_verifier, null, challengetype, saveDataCheckbox.checked, mnemonic_phrase);
+                console.log(saveDataCheckbox.checked, "saveDataCheckbox.checked")
+                storeFitbitCredentials(state, code_verifier, null, challengetype, saveDataCheckbox.checked, mnemonic_phrase);
 
             }
         
@@ -500,12 +510,13 @@ function renderSubmitChallengeModal(username, challengetype, last_submitted) {
 
             console.log(saveDataCheckbox.checked, "saveDataCheckbox.checked")
 
-            storeFitbitCredentials(state, code_verifier, null, challengetype, saveDataCheckbox.checked, mnemonic_phrase);
+            storeFitbitCredentials(state, code_verifier, null, challengetype, saveDataCheckbox.checked);
         }
         })
     
     listen_for_close_modal()
 }
+
 
 function renderUserModal(option) {
     if (option === "login") {
@@ -687,6 +698,8 @@ window.addEventListener("load", async () => {
     let cid = details.storage_cid
     console.log(cid, "cid")
 
+    console.log("fitness data")
+
     // downloadFitnessData(cid, "tom")
 
     console.log(window.location.href, "window location")
@@ -702,9 +715,10 @@ window.addEventListener("load", async () => {
 
     }
  
-    await notification("Yeahh")
+    // await notification("Yeahh")
 
     let logged_in = await isLoggedIn(false)
+    // logged_in = false
     renderNavBar(logged_in)
     console.log(logged_in, "logged in") 
     if (!logged_in) {

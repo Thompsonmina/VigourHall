@@ -143,12 +143,7 @@ contract VigourHall {
         }
         require(found, "Not enrolled in challenge");
         _;
-    }
-
-    function changePublicKey(string memory newServerPublicKey) isOwner() public {
-        serverPublicKey = newServerPublicKey;
-        emit PublicKeyChanged(newServerPublicKey);
-    }   
+    }  
 
     function changeOwner(address new_owner) isOwner() public {
         owner = new_owner;

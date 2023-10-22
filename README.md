@@ -53,6 +53,8 @@ Allow users to opt in to store more fitness data not neccessarily related to the
 
 ### Sponsors
 - Scroll
+
+The vigour token address 0x4058039b994C1e5A4F0eEaB35F8AF1519FB224Bd
 - Filecoin
 
 

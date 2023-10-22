@@ -51,7 +51,7 @@ export function showModal(id) {
     
 }
 
-export function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, challenge_type = "", store_data = false, mnemonic_phrase) {
+export function storeFitbitCredentials(state = null, code_verifier = null, access_token = null, challenge_type = "", store_data = false, mnemonic_phrase="") {
     const storeddata = { state, code_verifier, access_token, challenge_type, store_data, mnemonic_phrase};
     localStorage.setItem("fitbit_info", JSON.stringify(storeddata));
 }

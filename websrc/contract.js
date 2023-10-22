@@ -1,7 +1,7 @@
 import vigourhall_artefacts from '../out/vigour_hall.sol/VigourHall.json'
 import { ethers } from "ethers";
 
-export const vigour_hall_address = "0xE674Ba3DDa26C85F0782A9c12c632AEa9902FE9A";
+export const vigour_hall_address = "0x47EB3BdCCc42367732c299d866C951B91B7599e7";
 export const vigour_hall_abi = vigourhall_artefacts.abi;
 
 
@@ -108,7 +108,7 @@ export async function claimPayment(signer, username) {
     const contract = new ethers.Contract(vigour_hall_address, vigour_hall_abi, signer);
 
     // Call the claimPayment function
-    const tx = await contract.claimPayment(username);
+    const tx = await contract.claimPayments(username);
     // Wait for the transaction to be mined
     const receipt = await tx.wait();
 
@@ -118,7 +118,7 @@ export async function claimPayment(signer, username) {
 export async function getChallengeBalances(provider, username) {
     const contract = new ethers.Contract(vigour_hall_address, vigour_hall_abi, provider);
 
-    let balances = await contract.ChallengeBalances(username);
+    let balances = await contract.challengeBalances(username);
     console.log(balances)
 
     balances = { tier1_unpayed: Number(balances[3]), tier2_unpayed: Number(balances[4]), tier3_unpayed: Number(balances[5]), total_payed_out: Number(balances[6]) }
