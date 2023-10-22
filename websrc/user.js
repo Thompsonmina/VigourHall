@@ -1,4 +1,4 @@
-import { getUsers, getUserDetails, createNewUser } from "./contract";
+import { getUsers, getUserDetails, createNewUser, reassociateUser } from "./contract";
 import { notification, getUserInfo, storeUserInfo } from "./utils";
 import { generateUserSecureHash } from "./encrypt";
 
@@ -61,6 +61,27 @@ export async function login(provider, username,  current_address){
     }
 
 }
+
+
+export async function reassociate_user(signer, new_address, mnemonic_phrase){
+    console.log(username, new_address, "reassociate_user")
+    username = await get_username()
+
+    let user_details = await getUserDetails(provider, username)
+    if (!isValidEthereumAddress(new_address).is_valid) {
+        await notification("New address is not valid. Please try again.", true, 5000)
+    }
+    else if (generateUserSecureHash(mnemonic_phrase) != user_details.secure_hash) {
+        await notification("Your recovery phrase does not match the one associated to your username. Please try again.", true, 5000)
+    }
+    else {
+        await reassociateUser(signer, username, generateUserSecureHash(mnemonic_phrase), new_address)
+        await notification("You have successfully reassociated your address, ", false, 5000)
+    }
+
+}   
+
+
 
 
 

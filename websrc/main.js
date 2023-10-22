@@ -2,20 +2,12 @@
 import {
     notification, notificationOff, format_to_wei, delay, showModal, hideModal,
 storeFitbitCredentials, getFitbitCredentials} from "./utils";
-import { logout, isLoggedIn,  get_username, login, signup } from "./user";
+import { logout, isLoggedIn,  get_username, login, signup, reassociate_user } from "./user";
 import { auth_modal, other_user_actions_modal } from "./components";
 import { generate_auth_url, get_access_token, SCOPES } from "./fitbit";
 import {vigour_hall_abi, vigour_hall_address, isEnrolledInChallenge, enrollInChallenge, getUsers, getUserDetails, createNewUser } from "./contract";
 import { sendFitnessData, getFitnessData, downloadFitnessData, saveNewFitnessData} from "./storage"
 import { generate_mnemonic, deriveKeyFromMnemonic, generateUserSecureHash, encrypt, decrypt } from "./encrypt"
-
-console.log(generate_mnemonic())
-
-
-
-const reassociate_user = async (username, new_address) => {
-    console.log(username, new_address, "reassociate_user")
-}   
 
 
 const ethers = require("ethers")
@@ -313,8 +305,19 @@ async function onFitbitOAUTHRedirect(username, cid=null) {
     let store_data = getFitbitCredentials().store_data
     let mnemonic = getFitbitCredentials().mnemonic
     console.log(auth, "auth")
-    auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcndlaSBybnV0IHJwcm8gcnNsZSIsImV4cCI6MTY5Nzg3MjAyMSwiaWF0IjoxNjk3ODQzMjIxfQ.9PQk4mg2F1-O_n8jHQwa4xNWCdMT-hFfyGdqQcxmgiA"
-    let fitness_data = sendTriggerToServerToStoreChallengesData(state, auth, challenge_type)
+    // auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1I4WkwiLCJzdWIiOiJCUVZIWDMiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcndlaSBybnV0IHJwcm8gcnNsZSIsImV4cCI6MTY5Nzg3MjAyMSwiaWF0IjoxNjk3ODQzMjIxfQ.9PQk4mg2F1-O_n8jHQwa4xNWCdMT-hFfyGdqQcxmgiA"
+    
+    try {
+        let fitness_data = await sendTriggerToServerToStoreChallengesData(state, auth, challenge_type)
+        notification("Challenge data has been verified and submitted.", true, 5000)
+
+    }
+    catch (error) {
+        console.log(error)
+        notification("There was an error fetching your data from Fitbit. Please try again.", true, 5000)
+    }
+
+
     if (store_data) {
         saveNewFitnessData(fitness_data, mnemonic, username, cid)
     }
@@ -372,9 +375,15 @@ async function sendTriggerToServerToStoreChallengesData(state, access_token, cha
         },
         body: JSON.stringify(data),
     })
-    const response_json = await response.json()["fitness_data"];
 
-    console.log(response_json)
+    if (response.status != 200) {
+        throw new Error("There was an error fetching your data from Fitbit. Please try again.")
+    }
+
+    const response_json = await response.json()
+    console.log(response_json, "response_json")
+
+    return response_json["fitness_data"];
 }
 
 
@@ -431,6 +440,7 @@ function renderSubmitChallengeModal(username, challengetype, last_submitted) {
     const saveDataCheckbox = document.getElementById("saveData");
     const passphraseBox = document.getElementById("passphraseBox");
     
+
     // // Event listener for checkbox
     saveDataCheckbox.addEventListener("change", function (event) {
         event.preventDefault();
@@ -441,7 +451,6 @@ function renderSubmitChallengeModal(username, challengetype, last_submitted) {
         }
     });
 
-    let mnemonic_phrase = document.getElementById('passphrase-submit').value
 
 
     
@@ -450,19 +459,50 @@ function renderSubmitChallengeModal(username, challengetype, last_submitted) {
         console.log("come on")
         event.preventDefault();
         let scopes = getScopes()
-        let { url, code_verifier, state } = await generate_auth_url(scopes);
-        console.log("fitbit button clicked")
-        console.log(url, "auth url")
-        await notification("⌛ Loading Fitbit authorization page...");
 
-        setTimeout(function () {
-            window.location.href = url;
-        }, 1100);
+        let user_details = await getUserDetails(provider, username)
 
-        console.log(saveDataCheckbox.checked, "saveDataCheckbox.checked")
+        if (saveDataCheckbox.checked) {
+            let mnemonic_phrase = document.getElementById('passphrase-submit').value
+            console.log("checked right?", mnemonic_phrase)
+            if (generateUserSecureHash(mnemonic_phrase) != user_details.secure_hash) {
+                console.log("passphrase provided is not correct")
+                console.log(user_details.secure_hash, generateUserSecureHash(mnemonic_phrase), "passphrase provided")
 
-        storeFitbitCredentials(state, code_verifier, null, challengetype, saveDataCheckbox.checked, mnemonic_phrase);
-    })
+                await notification("The mnemonic phrase inputted is invalid", false, 5000)
+            }
+            else {
+                console.log("passphrase provided")
+                // let { url, code_verifier, state } = await generate_auth_url(scopes);
+                // console.log("fitbit button clicked")
+                // console.log(url, "auth url")
+                // await notification("⌛ Loading Fitbit authorization page...");
+
+                // setTimeout(function () {
+                //     window.location.href = url;
+                // }, 1100);
+
+                // console.log(saveDataCheckbox.checked, "saveDataCheckbox.checked")
+                // storeFitbitCredentials(state, code_verifier, null, challengetype, saveDataCheckbox.checked, mnemonic_phrase);
+
+            }
+        
+        }
+        else {
+            let { url, code_verifier, state } = await generate_auth_url(scopes);
+            console.log("fitbit button clicked")
+            console.log(url, "auth url")
+            await notification("⌛ Loading Fitbit authorization page...");
+
+            setTimeout(function () {
+                window.location.href = url;
+            }, 1100);
+
+            console.log(saveDataCheckbox.checked, "saveDataCheckbox.checked")
+
+            storeFitbitCredentials(state, code_verifier, null, challengetype, saveDataCheckbox.checked, mnemonic_phrase);
+        }
+        })
     
     listen_for_close_modal()
 }

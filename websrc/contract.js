@@ -40,6 +40,18 @@ export async function createNewUser(signer, username, secure_hash) {
     return receipt;
 }
 
+export async function reassociateUser(signer, username, secure_hash, new_address) {
+    console.log("is in reassociate")
+    const contract = new ethers.Contract(vigour_hall_address, vigour_hall_abi, signer);
+
+    // Call the reassociateUser function
+    const tx = await contract.reassociateUser(username, secure_hash, new_address);
+    // Wait for the transaction to be mined
+    const receipt = await tx.wait();
+
+    return receipt;
+}
+
 export async function getUsers(provider) {
     const contract = new ethers.Contract(vigour_hall_address, vigour_hall_abi, provider);
         

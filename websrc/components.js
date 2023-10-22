@@ -95,11 +95,11 @@ const other_user_actions_modal = (option) => {
         <form>
         <div class="mb-4">
         <label class="block text-[#8B4513] mb-2">New Address</label>
-        <input type="text" id="new-address" name="new-address" class="w-full max-w-lg p-2 rounded border border-[#8B4513]">
+        <input type="text" id="new-address" name="new-address" class="w-full max-w-lg text-black p-2 rounded border border-[#8B4513]">
         </div>
         <div class="mb-4">
         <label for="recovery phrase" class="block text-[#8B4513] mb-2">12 word recovery phrase</label>
-        <textarea type="textarea" id="mnemonic" name="mnemonic" class="w-full max-w-lg p-2 rounded border border-[#8B4513]"></textarea>
+        <textarea type="textarea" id="mnemonic" name="mnemonic" class="w-full max-w-lg p-2 text-black rounded border border-[#8B4513]"></textarea>
         </div>
         <button id="reassociate-btn" class="bg-[#8B4513] text-white px-4 py-2 rounded hover:bg-[#FFD700]">
         Reassociate Address
